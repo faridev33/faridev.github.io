@@ -567,13 +567,13 @@ body {
 }
 
 /* ==========================================
-   TECHNICAL SKILLS SECTION (TAMPILAN RAPI & BERWARNA)
+   TECHNICAL SKILLS SECTION
    ========================================== */
 .skills-wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
-    align-items: stretch; /* Memastikan 3 kotak sama tingginya */
+    align-items: stretch;
 }
 
 .skill-category {
@@ -625,14 +625,13 @@ body {
     transition: var(--transition);
 }
 
-/* Ukuran & Perataan Ikon */
 .skill-tags span i {
     font-size: 1.3rem;
     line-height: 1;
     display: inline-block;
 }
 
-/* Custom Warna Brand untuk Ikon non-Devicon */
+/* Custom Warna Brand */
 .icon-yolo { color: #FF6B00; }
 .icon-powerbi { color: #F2C811; }
 .icon-rfm { color: #2563EB; }
@@ -641,7 +640,6 @@ body {
 .icon-excel { color: #107C41; }
 .icon-github { color: #181717; }
 
-/* Hover Effect pada Tag Keahlian */
 .skill-tags span:hover {
     border-color: var(--primary-blue);
     background: var(--blue-light);
@@ -713,7 +711,7 @@ footer {
     .hero { grid-template-columns: 1fr; text-align: center; }
     .hero-buttons, .contact-quick { justify-content: center; }
     .timeline-grid { grid-template-columns: 1fr; }
-    .skills-wrapper { grid-template-columns: 1fr; } /* Stack 1 kolom di Tablet/HP */
+    .skills-wrapper { grid-template-columns: 1fr; }
     .desktop-cta { display: none; }
     
     .hamburger { display: block; }
