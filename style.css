@@ -55,7 +55,7 @@ body {
 }
 
 .blue-text { color: var(--primary-blue); }
-.section { padding: 90px 0; }
+.section { padding: 85px 0; }
 
 /* Section Header Badges */
 .section-tag {
@@ -314,7 +314,7 @@ body {
 }
 
 /* ==========================================================
-   PROFILE PHOTO CARD DENGAN ROTATING BORDER PRESISI (SMOOTH)
+   PROFILE PHOTO CARD
    ========================================================== */
 .profile-card {
     position: relative;
@@ -326,7 +326,7 @@ body {
 .profile-img-container {
     position: relative;
     border-radius: 24px;
-    padding: 4px; /* Ketebalan garis neon berputar */
+    padding: 4px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -335,13 +335,12 @@ body {
     box-shadow: 0 16px 36px -6px rgba(37, 99, 235, 0.22);
 }
 
-/* Cahaya Berputar Presisi 360 Derajat */
 .profile-img-container::before {
     content: '';
     position: absolute;
-    width: 260%;  /* Cukup besar agar tidak terpotong saat diputar */
+    width: 260%;
     height: 260%;
-    top: -80%;    /* Menarik poros rotasi tepat di titik tengah foto */
+    top: -80%;
     left: -80%;
     background: conic-gradient(
         from 0deg,
@@ -357,7 +356,6 @@ body {
     z-index: 0;
 }
 
-/* Foto Profil Utama */
 .profile-img {
     position: relative;
     z-index: 1;
@@ -389,18 +387,13 @@ body {
     box-shadow: var(--shadow-card);
 }
 
-/* Keyframes Rotasi Muter Muter 360 Derajat Halus */
 @keyframes rotateBorderSmooth {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* ==========================================
-   STATS BAR (KPI DASHBOARD CARDS)
+   STATS BAR
    ========================================== */
 .stats-bar {
     background: var(--bg-subtle);
@@ -462,13 +455,14 @@ body {
    ========================================== */
 .timeline-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 36px;
+    grid-template-columns: 1.15fr 0.85fr; /* Rasio seimbang */
+    gap: 32px;
+    align-items: start;
 }
 
 .col-title {
-    font-size: 1.25rem;
-    margin-bottom: 22px;
+    font-size: 1.22rem;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -479,9 +473,9 @@ body {
 .timeline-card {
     background: var(--bg-main);
     border: 1px solid var(--blue-border);
-    padding: 24px;
+    padding: 22px;
     border-radius: var(--radius-md);
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     transition: var(--transition-smooth);
 }
 
@@ -508,21 +502,14 @@ body {
     display: inline-block;
     background: var(--blue-light);
     color: var(--primary-blue);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
     padding: 3px 10px;
     border-radius: var(--radius-full);
 }
 
-.date-gold {
-    background: #FEF3C7;
-    color: #B45309;
-}
-
-.date-edu {
-    background: #F1F5F9;
-    color: #475569;
-}
+.date-gold { background: #FEF3C7; color: #B45309; }
+.date-edu { background: #F1F5F9; color: #475569; }
 
 .pill-status {
     font-size: 0.72rem;
@@ -534,7 +521,7 @@ body {
 }
 
 .timeline-card h4 {
-    font-size: 1.12rem;
+    font-size: 1.08rem;
     font-weight: 700;
     color: var(--text-main);
     margin-bottom: 4px;
@@ -542,85 +529,209 @@ body {
 
 .institution {
     color: var(--text-muted);
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     font-weight: 600;
     margin-bottom: 12px;
+}
+
+.timeline-card .details {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-body);
+    margin-bottom: 6px;
 }
 
 .timeline-card ul {
     padding-left: 18px;
     color: var(--text-body);
-    font-size: 0.88rem;
+    font-size: 0.86rem;
 }
 
-.timeline-card ul li {
-    margin-bottom: 6px;
-}
+.timeline-card ul li { margin-bottom: 5px; }
 
 .link-action {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 12px;
+    margin-top: 10px;
     color: var(--primary-blue);
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     font-weight: 700;
     text-decoration: none;
 }
 
-.link-action:hover {
-    text-decoration: underline;
+.link-action:hover { text-decoration: underline; }
+
+/* ==========================================================
+   SERTIFIKASI RESMI (GRID SIMETRIS MELEBAR DI BAWAH)
+   ========================================================== */
+.cert-showcase-section {
+    margin-top: 45px;
+    padding-top: 35px;
+    border-top: 1px dashed var(--blue-border);
 }
 
-/* Certifications Box */
-.cert-box {
-    background: var(--bg-subtle);
+.cert-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.cert-subtitle-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: var(--blue-light);
+    color: var(--primary-blue);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+}
+
+.cert-grid-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 Kolom Seimbang */
+    gap: 16px;
+}
+
+.cert-compact-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--bg-main);
     border: 1px solid var(--blue-border);
     border-radius: var(--radius-md);
-    padding: 22px;
+    padding: 14px;
+    transition: var(--transition-smooth);
 }
 
-.cert-box h4 {
-    margin-bottom: 14px;
-    font-size: 1.05rem;
-    color: var(--text-main);
+.cert-compact-card:hover {
+    border-color: var(--blue-border-active);
+    box-shadow: 0 8px 18px -4px rgba(37, 99, 235, 0.12);
+    transform: translateY(-2px);
+}
+
+/* Sisi Kiri: Thumbnail Rapi & Proporsional */
+.cert-media {
+    position: relative;
+    width: 90px;
+    height: 70px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #F8FAFC;
+    border: 1px solid var(--blue-border);
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    text-decoration: none;
 }
 
-.cert-item {
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--blue-border);
+.cert-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.3s ease;
 }
 
-.cert-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.cert-main {
+.zoom-tag {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    color: #FFFFFF;
+    font-size: 0.8rem;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.cert-media:hover .cert-img {
+    transform: scale(1.08);
+}
+
+.cert-media:hover .zoom-tag {
+    opacity: 1;
+}
+
+/* Sisi Kanan: Detail Teks */
+.cert-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.cert-topline {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
+    gap: 6px;
+    margin-bottom: 3px;
+}
+
+.badge-mini {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.badge-green  { background: #DCFCE7; color: #15803D; }
+.badge-blue   { background: #EFF6FF; color: #1D4ED8; }
+.badge-gold   { background: #FEF3C7; color: #B45309; }
+.badge-purple { background: #EDE9FE; color: #6D28D9; }
+
+.cert-meta-date {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.cert-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.3;
     margin-bottom: 2px;
 }
 
-.cert-status {
-    font-size: 0.72rem;
-    font-weight: 700;
-    background: #DCFCE7;
-    color: #15803D;
-    padding: 2px 8px;
-    border-radius: 4px;
+.cert-provider {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.cert-org {
-    font-size: 0.82rem;
+.cert-summary {
+    font-size: 0.73rem;
     color: var(--text-muted);
+    line-height: 1.3;
+    margin-bottom: 5px;
+}
+
+.cert-summary strong {
+    color: var(--text-body);
+}
+
+.cert-link-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+}
+
+.cert-link-inline:hover {
+    color: var(--primary-blue-hover);
+    gap: 6px;
 }
 
 /* ==========================================
@@ -672,7 +783,6 @@ body {
     gap: 24px;
 }
 
-/* Card Equal-Height Setup */
 .project-card {
     background: var(--bg-main);
     border-radius: var(--radius-md);
@@ -680,7 +790,7 @@ body {
     overflow: hidden;
     transition: var(--transition-smooth);
     display: flex;
-    flex-direction: column; /* Menjamin footer tombol sejajar */
+    flex-direction: column;
 }
 
 .project-card:hover {
@@ -727,7 +837,7 @@ body {
     padding: 22px;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Biarkan info mengisi seluruh sisa tinggi */
+    flex-grow: 1;
 }
 
 .tech-stack {
@@ -753,7 +863,6 @@ body {
     margin-bottom: 18px;
 }
 
-/* Selalu tempelkan tombol di bagian terbawah kartu secara presisi */
 .project-links {
     margin-top: auto;
     display: flex;
@@ -850,9 +959,7 @@ body {
     transition: var(--transition-smooth);
 }
 
-.skill-tags span i {
-    font-size: 1.15rem;
-}
+.skill-tags span i { font-size: 1.15rem; }
 
 .skill-tags span:hover {
     border-color: var(--primary-blue);
@@ -943,6 +1050,7 @@ footer {
     .subtitle { margin-left: auto; margin-right: auto; }
     .hero-buttons, .contact-quick { justify-content: center; }
     .timeline-grid { grid-template-columns: 1fr; }
+    .cert-grid-two { grid-template-columns: 1fr; } /* Sertifikat 1 kolom di tablet */
     .skills-wrapper { grid-template-columns: 1fr; }
     .desktop-cta { display: none; }
     .hamburger { display: block; }
@@ -962,10 +1070,7 @@ footer {
         border-top: 1px solid var(--blue-border);
     }
 
-    .nav-links.active {
-        left: 0;
-    }
-
+    .nav-links.active { left: 0; }
     .nav-links a { font-size: 1.15rem; }
     .mobile-cta { display: block; }
 }
@@ -975,6 +1080,19 @@ footer {
     .role-subtitle { font-size: 1rem; }
     .profile-img { width: 260px; height: 320px; }
     .hero-buttons .btn { width: 100%; }
+    
+    .cert-compact-card {
+        gap: 12px;
+        padding: 10px;
+    }
+    .cert-media {
+        width: 78px;
+        height: 60px;
+    }
+    .cert-name {
+        font-size: 0.82rem;
+    }
+
     .filter-container { width: 100%; border-radius: var(--radius-md); }
     .filter-btn { flex: 1 1 45%; text-align: center; }
     .footer-content { flex-direction: column; gap: 12px; text-align: center; }
