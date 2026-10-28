@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +15,153 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css">
     
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* =============================================
+           3D ANIMATIONS EXTRA STYLES
+           ============================================= */
+
+        #particles-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; opacity: 0.45;
+        }
+        [data-theme="dark"] #particles-canvas { opacity: 0.65; }
+        header, main, footer { position: relative; z-index: 1; }
+
+        /* 3D Orbit Rings */
+        .orbit-3d-ring {
+            position: absolute; border-radius: 50%;
+            border: 1.5px dashed rgba(37,99,235,0.3);
+            transform-style: preserve-3d;
+            top: 50%; left: 50%; pointer-events: none;
+        }
+        [data-theme="dark"] .orbit-3d-ring { border-color: rgba(96,165,250,0.3); }
+        .orbit-3d-ring-1 { width:310px; height:310px; margin:-155px; animation: ring-spin-1 9s linear infinite; }
+        .orbit-3d-ring-2 { width:240px; height:240px; margin:-120px; animation: ring-spin-2 13s linear infinite reverse; }
+        .orbit-3d-ring-3 { width:370px; height:370px; margin:-185px; animation: ring-spin-3 18s linear infinite; }
+        @keyframes ring-spin-1 { 0%{transform:rotateX(65deg) rotateZ(0deg)}   100%{transform:rotateX(65deg) rotateZ(360deg)} }
+        @keyframes ring-spin-2 { 0%{transform:rotateX(65deg) rotateZ(60deg)}  100%{transform:rotateX(65deg) rotateZ(-300deg)} }
+        @keyframes ring-spin-3 { 0%{transform:rotateX(65deg) rotateZ(120deg)} 100%{transform:rotateX(65deg) rotateZ(480deg)} }
+
+        /* Orbiting dots */
+        .orbit-dot {
+            position: absolute; width:38px; height:38px;
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            color:white; font-size:15px;
+        }
+        .orbit-dot-a { background:linear-gradient(135deg,#2563eb,#1d4ed8); box-shadow:0 0 18px rgba(37,99,235,.7),0 0 36px rgba(37,99,235,.3); top:50%; left:100%; margin:-19px; animation:dot-spin-a 9s linear infinite reverse; }
+        .orbit-dot-b { background:linear-gradient(135deg,#7c3aed,#6d28d9); box-shadow:0 0 18px rgba(124,58,237,.7); top:100%; left:50%; margin:-19px; animation:dot-spin-b 13s linear infinite; }
+        .orbit-dot-c { background:linear-gradient(135deg,#0ea5e9,#0284c7); box-shadow:0 0 18px rgba(14,165,233,.7); top:0%; left:50%; margin:-19px; animation:dot-spin-c 18s linear infinite reverse; }
+        @keyframes dot-spin-a { to{transform:rotate(360deg)} }
+        @keyframes dot-spin-b { to{transform:rotate(-360deg)} }
+        @keyframes dot-spin-c { to{transform:rotate(360deg)} }
+
+        /* Animated gradient line */
+        .line {
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #0ea5e9, #2563eb) !important;
+            background-size: 200% 100% !important;
+            animation: gradient-sweep 4s linear infinite !important;
+        }
+        @keyframes gradient-sweep { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
+
+        /* Profile photo glow pulse */
+        .profile-img-container { animation: photo-glow 4s ease-in-out infinite; }
+        @keyframes photo-glow {
+            0%,100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 20px 60px rgba(37,99,235,.15); }
+            50%      { box-shadow: 0 0 0 14px rgba(37,99,235,.1), 0 20px 60px rgba(37,99,235,.4); }
+        }
+
+        /* Stat card 3D hover */
+        .stat-card { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease; }
+        .stat-card:hover { transform: translateY(-8px) rotateX(5deg) scale(1.03); box-shadow: 0 24px 48px rgba(37,99,235,.2); }
+
+        /* Timeline card 3D hover */
+        .timeline-card { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease; }
+        .timeline-card:hover { transform: translateY(-6px) perspective(800px) rotateX(2deg); box-shadow: 0 20px 50px rgba(37,99,235,.18); }
+
+        /* Project card 3D hover */
+        .project-card { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease; }
+        .project-card:hover { transform: translateY(-10px) perspective(1200px) rotateX(3deg) scale(1.01); box-shadow: 0 30px 60px rgba(37,99,235,.24); }
+
+        /* Skill tag hover 3D */
+        .skill-tags span { transition: transform .2s ease, box-shadow .2s ease; }
+        .skill-tags span:hover { transform: translateY(-5px) scale(1.07); box-shadow: 0 10px 26px rgba(37,99,235,.28); }
+
+        /* Skill category 3D hover */
+        .skill-category { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease; }
+        .skill-category:hover { transform: translateY(-8px) rotateX(4deg) scale(1.02); box-shadow: 0 24px 50px rgba(37,99,235,.18); }
+
+        /* Cert card 3D hover */
+        .cert-compact-card { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease; }
+        .cert-compact-card:hover { transform: translateY(-6px) perspective(800px) rotateX(3deg) rotateY(-2deg); box-shadow: 0 24px 50px rgba(37,99,235,.2); }
+
+        /* Badge float */
+        .badge { animation: badge-float 4s ease-in-out infinite; }
+        @keyframes badge-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+        /* Logo glow */
+        .logo { animation: logo-shimmer 5s ease-in-out infinite; }
+        @keyframes logo-shimmer { 0%,100%{filter:drop-shadow(0 0 0px rgba(37,99,235,0))} 50%{filter:drop-shadow(0 0 12px rgba(37,99,235,.55))} }
+
+        /* Stat number glow */
+        .stat-content h3 { animation: num-glow 3s ease-in-out infinite; }
+        @keyframes num-glow { 0%,100%{text-shadow:none} 50%{text-shadow:0 0 20px rgba(37,99,235,.45)} }
+
+        /* Mouse cursor glow */
+        #cursor-glow {
+            position:fixed; width:320px; height:320px; border-radius:50%;
+            background:radial-gradient(circle, rgba(37,99,235,.07) 0%, transparent 70%);
+            pointer-events:none; z-index:9998;
+            transform:translate(-50%,-50%);
+            transition: left .12s ease-out, top .12s ease-out, opacity .3s ease;
+            opacity:0;
+        }
+
+        /* Hero section overflow */
+        .hero { position:relative; overflow:hidden; }
+
+        /* Ensure hero-visual has proper relative positioning */
+        .hero-visual {
+            position: relative !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* All 3D decorative elements MUST be absolute so they don't affect flow */
+                .orbit-3d-ring {
+            position: absolute !important;
+        }
+
+        /* Profile card must be relative and stay in normal flow (above absolute items) */
+        .profile-card {
+            position: relative !important;
+            z-index: 2 !important;
+        }
+
+        /* orbit-3d-ring positioning fix: centered on hero-visual */
+        .orbit-3d-ring {
+            top: 50% !important;
+            left: 50% !important;
+        }
+
+        /* Reduce motion */
+        /* Hide old orbit elements - replaced by 3D rings */
+        .orbit-scene, .orbit-ring, .orbit-label { display: none !important; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+        }
+    </style>
 </head>
 <body>
+
+    <!-- 3D Particle Canvas Background -->
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+    <!-- Mouse cursor glow -->
+    <div id="cursor-glow" aria-hidden="true"></div>
 
     <!-- ==========================================
          NAVBAR SECTION
@@ -39,6 +184,10 @@
 
             <div class="nav-actions">
                 <a href="https://wa.me/6285161090932?text=Halo%20Gifari,%20saya%20tertarik%20untuk%20berdiskusi%20proyek/peluang%20kerja." target="_blank" class="btn btn-primary btn-shine desktop-cta">Hubungi Saya</a>
+                <button class="theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false" title="Aktifkan mode gelap">
+                    <i class="fa-solid fa-moon" aria-hidden="true"></i>
+                    <span class="theme-toggle-label">Gelap</span>
+                </button>
                 <button class="hamburger" id="hamburgerBtn" aria-label="Buka Menu Navigasi">
                     <i class="fa-solid fa-bars"></i>
                 </button>
@@ -89,7 +238,18 @@
             </div>
 
             <!-- FOTO PROFIL -->
-            <div class="hero-visual scroll-reveal delay-1">
+            <div class="hero-visual scroll-reveal delay-1" id="heroVisual">
+                <!-- 3D Orbit Rings with Dots -->
+                <div class="orbit-3d-ring orbit-3d-ring-1" aria-hidden="true">
+                    <div class="orbit-dot orbit-dot-a"><i class="fa-brands fa-python"></i></div>
+                </div>
+                <div class="orbit-3d-ring orbit-3d-ring-2" aria-hidden="true">
+                    <div class="orbit-dot orbit-dot-b"><i class="fa-solid fa-robot"></i></div>
+                </div>
+                <div class="orbit-3d-ring orbit-3d-ring-3" aria-hidden="true">
+                    <div class="orbit-dot orbit-dot-c"><i class="fa-brands fa-react"></i></div>
+                </div>
+
                 <div class="profile-card float-animation">
                     <div class="profile-img-container">
                         <img src="images/Untitled-1.png" alt="Gifari Hilal Hilmi Nashif" class="profile-img" onerror="this.onerror=null; this.src='https://placehold.co/320x380/2563EB/FFFFFF?text=Gifari+Hilal';">
@@ -151,11 +311,11 @@
             <!-- BAGIAN 1: GRID 2 KOLOM (PENGALAMAN VS PENDIDIKAN) -->
             <div class="timeline-grid">
                 <!-- Kolom Kiri: Pengalaman Kerja & Riset -->
-                <div class="timeline-col scroll-reveal">
-                    <h3 class="col-title"><i class="fa-solid fa-briefcase blue-text"></i> Pengalaman Kerja & Riset</h3>
-                    
+                <div class="timeline-col">
+                    <h3 class="col-title scroll-reveal"><i class="fa-solid fa-briefcase blue-text"></i> Pengalaman Kerja & Riset</h3>
+
                     <!-- KARTU PUBLIKASI RISET -->
-                    <article class="timeline-card research-highlight hover-lift">
+                    <article class="timeline-card research-highlight hover-lift scroll-reveal">
                         <div class="card-header-flex">
                             <span class="timeline-date date-gold"><i class="fa-solid fa-microscope"></i> Jan 2026 – AI Research</span>
                             <span class="pill-status">SINTA Terindeks</span>
@@ -173,7 +333,7 @@
                     </article>
 
                     <!-- MAGANG BANK JATENG -->
-                    <article class="timeline-card hover-lift">
+                    <article class="timeline-card hover-lift scroll-reveal delay-1">
                         <span class="timeline-date">Feb 2025 – Apr 2025</span>
                         <h4>Digital Innovation Division Intern</h4>
                         <p class="institution">PT Bank Pembangunan Daerah Jawa Tengah (Bank Jateng)</p>
@@ -185,7 +345,7 @@
                     </article>
 
                     <!-- ASISTEN LAB -->
-                    <article class="timeline-card hover-lift">
+                    <article class="timeline-card hover-lift scroll-reveal delay-2">
                         <span class="timeline-date">Agu 2024 – Feb 2025</span>
                         <h4>Asisten Laboratorium Pemrograman Web</h4>
                         <p class="institution">Universitas Dian Nuswantoro (UDINUS)</p>
@@ -197,11 +357,11 @@
                 </div>
 
                 <!-- Kolom Kanan: Pendidikan Akademik -->
-                <div class="timeline-col scroll-reveal delay-1">
-                    <h3 class="col-title"><i class="fa-solid fa-graduation-cap blue-text"></i> Pendidikan Akademik</h3>
-                    
+                <div class="timeline-col">
+                    <h3 class="col-title scroll-reveal delay-1"><i class="fa-solid fa-graduation-cap blue-text"></i> Pendidikan Akademik</h3>
+
                     <!-- PENDIDIKAN S2 -->
-                    <article class="timeline-card edu-card hover-lift">
+                    <article class="timeline-card edu-card hover-lift scroll-reveal delay-1">
                         <span class="timeline-date date-edu">2026 – Sekarang</span>
                         <h4>Magister Komputer (S2) - Teknik Informatika</h4>
                         <p class="institution">Universitas Dian Nuswantoro (UDINUS)</p>
@@ -213,7 +373,7 @@
                     </article>
 
                     <!-- PENDIDIKAN S1 -->
-                    <article class="timeline-card edu-card hover-lift">
+                    <article class="timeline-card edu-card hover-lift scroll-reveal delay-2">
                         <span class="timeline-date date-edu">Agu 2022 – Mar 2026</span>
                         <h4>Sarjana Komputer (S1) - Teknik Informatika</h4>
                         <p class="institution">Universitas Dian Nuswantoro (UDINUS)</p>
@@ -228,8 +388,8 @@
             </div>
 
             <!-- BAGIAN 2: GRID SERTIFIKASI RESMI (TERVERIFIKASI) -->
-            <div class="cert-showcase-section scroll-reveal delay-2">
-                <div class="cert-header">
+            <div class="cert-showcase-section">
+                <div class="cert-header scroll-reveal">
                     <h3 class="col-title" style="margin-bottom: 0;">
                         <i class="fa-solid fa-stamp blue-text"></i> Lisensi & Sertifikasi Resmi
                     </h3>
@@ -238,7 +398,7 @@
                 
                 <div class="cert-grid-two">
                     <!-- [1] BNSP DATA SCIENTIST MADYA -->
-                    <article class="cert-compact-card hover-lift">
+                    <article class="cert-compact-card hover-lift scroll-reveal">
                         <a href="images/bnsp.png" target="_blank" class="cert-media" title="Perbesar sertifikat">
                             <img src="images/bnsp.png" alt="Sertifikat BNSP Data Scientist" class="cert-img" onerror="this.onerror=null; this.src='https://placehold.co/300x400/1E3A8A/FFFFFF?text=BNSP';">
                             <span class="zoom-tag"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
@@ -256,7 +416,7 @@
                     </article>
 
                     <!-- [2] BISA AI - DATA SCIENCE (BARU DITAMBAHKAN) -->
-                    <article class="cert-compact-card hover-lift">
+                    <article class="cert-compact-card hover-lift scroll-reveal">
                         <a href="images\data Science.png" target="_blank" class="cert-media" title="Perbesar sertifikat">
                             <img src="images\data Science.png" alt="Sertifikat BISA AI Data Science" class="cert-img" onerror="this.onerror=null; this.src='https://placehold.co/400x280/2563EB/FFFFFF?text=BISA+AI+Data+Science';">
                             <span class="zoom-tag"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
@@ -274,7 +434,7 @@
                     </article>
 
                     <!-- [3] BISA AI - MACHINE LEARNING SCIKIT-LEARN -->
-                    <article class="cert-compact-card hover-lift">
+                    <article class="cert-compact-card hover-lift scroll-reveal">
                         <a href="images/Machine Learning Dengan Scikit Learn Python.png" target="_blank" class="cert-media" title="Perbesar sertifikat">
                             <img src="images/Machine Learning Dengan Scikit Learn Python.png" alt="Sertifikat BISA AI" class="cert-img" onerror="this.onerror=null; this.src='https://placehold.co/400x280/2563EB/FFFFFF?text=BISA+AI';">
                             <span class="zoom-tag"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
@@ -292,7 +452,7 @@
                     </article>
 
                     <!-- [4] BASS CONSULTANT & GOOGLE.ORG - AI LITERACY -->
-                    <article class="cert-compact-card hover-lift">
+                    <article class="cert-compact-card hover-lift scroll-reveal">
                         <a href="images/bass.png" target="_blank" class="cert-media" title="Perbesar sertifikat">
                             <img src="images/bass.png" alt="Sertifikat Google.org BASS" class="cert-img" onerror="this.onerror=null; this.src='https://placehold.co/400x280/B45309/FFFFFF?text=Google.org';">
                             <span class="zoom-tag"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
@@ -310,7 +470,7 @@
                     </article>
 
                     <!-- [5] CFLT UDINUS - ENGLISH PROFICIENCY (TOEFL) -->
-                    <article class="cert-compact-card hover-lift">
+                    <article class="cert-compact-card hover-lift scroll-reveal">
                         <a href="images/toefl.png" target="_blank" class="cert-media" title="Perbesar sertifikat">
                             <img src="images/toefl.png" alt="Sertifikat TOEFL UDINUS" class="cert-img" onerror="this.onerror=null; this.src='https://placehold.co/400x280/6D28D9/FFFFFF?text=TOEFL';">
                             <span class="zoom-tag"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
@@ -644,6 +804,30 @@
          JAVASCRIPT LOGIC
          ========================================== -->
     <script>
+        // Color theme toggle with a persisted preference.
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const themeLabel = themeToggle.querySelector('.theme-toggle-label');
+        const savedTheme = localStorage.getItem('portfolio-theme');
+
+        function applyTheme(theme) {
+            const isDark = theme === 'dark';
+            document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+            themeToggle.setAttribute('aria-label', isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+            themeToggle.title = isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap';
+            themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            themeLabel.textContent = isDark ? 'Terang' : 'Gelap';
+        }
+
+        applyTheme(savedTheme === 'dark' ? 'dark' : 'light');
+
+        themeToggle.addEventListener('click', () => {
+            const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('portfolio-theme', nextTheme);
+            applyTheme(nextTheme);
+        });
+
         // Hamburger Menu Toggle
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const navLinks = document.getElementById('navLinks');
@@ -702,11 +886,254 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('reveal-active');
+                    observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        let certificationIndex = 0;
+        revealElements.forEach(element => {
+            if (element.matches('.cert-compact-card')) {
+                element.style.setProperty('--reveal-delay', `${(certificationIndex % 2) * 90}ms`);
+                certificationIndex += 1;
+            }
+            observer.observe(element);
+        });
+
+        // =============================================
+        // 3D PARTICLE NETWORK CANVAS
+        // =============================================
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reducedMotion) { canvas.style.display = 'none'; return; }
+
+            let W, H, particles = [], animId;
+            const PARTICLE_COUNT = 80;
+            const MAX_DIST = 140;
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', () => { resize(); });
+
+            function getColor() {
+                const isDark = document.documentElement.dataset.theme === 'dark';
+                return isDark ? '96, 165, 250' : '37, 99, 235';
+            }
+
+            function createParticle() {
+                return {
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2.5 + 1
+                };
+            }
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(createParticle());
+
+            let mouseX = -9999, mouseY = -9999;
+            window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+                const col = getColor();
+
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > W) p.vx *= -1;
+                    if (p.y < 0 || p.y > H) p.vy *= -1;
+
+                    // mouse repulsion
+                    const dx = p.x - mouseX, dy = p.y - mouseY;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 100) {
+                        p.x += dx / dist * 1.5;
+                        p.y += dy / dist * 1.5;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${col}, 0.7)`;
+                    ctx.fill();
+                });
+
+                // Draw connecting lines
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const d = Math.sqrt(dx*dx + dy*dy);
+                        if (d < MAX_DIST) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(${col}, ${(1 - d/MAX_DIST) * 0.35})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                animId = requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        // =============================================
+        // MOUSE CURSOR GLOW
+        // =============================================
+        (function() {
+            const glow = document.getElementById('cursor-glow');
+            if (!glow) return;
+            let active = false;
+            document.addEventListener('mousemove', e => {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+                if (!active) { glow.style.opacity = '1'; active = true; }
+            });
+            document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; active = false; });
+        })();
+
+        // =============================================
+        // 3D CARD TILT on project cards
+        // =============================================
+        (function() {
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const finePointer = window.matchMedia('(pointer: fine)').matches;
+            if (reducedMotion || !finePointer) return;
+
+            const tiltTargets = document.querySelectorAll('.project-card, .stat-card, .skill-category, .cert-compact-card, .timeline-card');
+            tiltTargets.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width - 0.5;
+                    const y = (e.clientY - rect.top) / rect.height - 0.5;
+                    const rotX = y * -10;
+                    const rotY = x * 12;
+                    card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-6px) scale(1.02)`;
+                    card.style.boxShadow = `${-rotY*1.5}px ${rotX*1.5 + 20}px 50px rgba(37,99,235,0.22)`;
+                    card.style.transition = 'transform 0.05s ease-out, box-shadow 0.05s ease-out';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+                });
+            });
+        })();
+
+        // =============================================
+        // FLOATING PARTICLES (CSS-based rising dots)
+        // =============================================
+        (function() {
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reducedMotion) return;
+            const hero = document.querySelector('.hero');
+            if (!hero) return;
+            const DOTS = 18;
+            for (let i = 0; i < DOTS; i++) {
+                const dot = document.createElement('span');
+                const size = Math.random() * 6 + 3;
+                dot.style.cssText = `
+                    position:absolute;
+                    width:${size}px; height:${size}px;
+                    border-radius:50%;
+                    background:rgba(37,99,235,${Math.random()*0.3+0.1});
+                    left:${Math.random()*100}%;
+                    bottom:${Math.random()*20}%;
+                    pointer-events:none;
+                    z-index:0;
+                    animation: particle-rise ${Math.random()*10+8}s ease-in-out ${Math.random()*8}s infinite;
+                `;
+                hero.appendChild(dot);
+            }
+
+            // Add keyframe if not already present
+            if (!document.querySelector('#particle-rise-kf')) {
+                const style = document.createElement('style');
+                style.id = 'particle-rise-kf';
+                style.textContent = `
+                    @keyframes particle-rise {
+                        0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+                        10%  { opacity: 1; }
+                        90%  { opacity: 0.4; }
+                        100% { transform: translateY(-80vh) rotate(360deg); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        })();
+
+        // =============================================
+        // TYPEWRITER EFFECT on role subtitle
+        // =============================================
+        (function() {
+            const el = document.querySelector('.role-subtitle');
+            if (!el) return;
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reducedMotion) return;
+            const roles = [
+                'AI Engineer • Full-Stack Developer • Data Scientist',
+                'Computer Vision Specialist • LLM Integrator',
+                'Machine Learning Engineer • Researcher',
+                'FastAPI + React 19 • Django DRF • Flutter'
+            ];
+            let roleIdx = 0, charIdx = 0, deleting = false;
+            el.innerHTML = '';
+            el.style.borderRight = '2px solid #2563eb';
+            el.style.paddingRight = '4px';
+
+            function tick() {
+                const current = roles[roleIdx];
+                if (!deleting) {
+                    el.textContent = current.slice(0, charIdx + 1);
+                    charIdx++;
+                    if (charIdx === current.length) {
+                        deleting = true;
+                        setTimeout(tick, 1800);
+                        return;
+                    }
+                } else {
+                    el.textContent = current.slice(0, charIdx - 1);
+                    charIdx--;
+                    if (charIdx === 0) {
+                        deleting = false;
+                        roleIdx = (roleIdx + 1) % roles.length;
+                    }
+                }
+                setTimeout(tick, deleting ? 40 : 70);
+            }
+            setTimeout(tick, 800);
+        })();
+
+        // Subtle 3D tilt that follows the pointer on devices with a fine pointer.
+        const heroVisual = document.getElementById('heroVisual');
+        const profileImage = heroVisual.querySelector('.profile-img-container');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const finePointer = window.matchMedia('(pointer: fine)');
+
+        if (!reducedMotion.matches && finePointer.matches) {
+            heroVisual.addEventListener('pointermove', event => {
+                const bounds = heroVisual.getBoundingClientRect();
+                const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+                const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+                profileImage.style.setProperty('--tilt-x', `${x * 10}deg`);
+                profileImage.style.setProperty('--tilt-y', `${y * -10}deg`);
+            });
+
+            heroVisual.addEventListener('pointerleave', () => {
+                profileImage.style.setProperty('--tilt-x', '0deg');
+                profileImage.style.setProperty('--tilt-y', '0deg');
+            });
+        }
     </script>
 </body>
 </html>
