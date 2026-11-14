@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cafe Fari - Sistem Masuk & Akses Shift</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Demo Switcher Topbar -->
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <!-- Login Main Container with Background -->
+  <div class="login-container" style="background-image: url('assets/images/pexels-fotios-photos-1024359.jpg');">
+    <div class="login-overlay">
+      <div class="login-card glass-effect">
+        
+        <div class="header-section">
+          <h1 class="cafe-name">Cafe Fari</h1>
+          <p class="welcome-text">Silakan masuk untuk memulai shift Anda</p>
+        </div>
+
+        <div id="errorMsg" style="display:none; background:#f8d7da; color:#721c24; padding:8px 12px; border-radius:6px; font-size:13px; margin-bottom:15px;"></div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              class="form-input" 
+              placeholder="cth: admin, kasir, kitchen" 
+              required 
+              value="admin"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-input" 
+              placeholder="••••••••" 
+              required 
+              value="password"
+            />
+          </div>
+
+          <button type="submit" class="btn-primary">
+            MASUK
+          </button>
+        </form>
+
+        <!-- Quick Access Section (Exact from original LoginForm.jsx) -->
+        <div class="quick-access-section">
+          <div class="quick-access-divider">
+            <span>Akses Cepat (Demo / Dev)</span>
+          </div>
+
+          <div class="quick-access-grid">
+            <a href="admin-dashboard.html" class="btn-quick admin" onclick="setDemoUser('admin', 'SuperAdmin')">
+              👑 Super Admin
+            </a>
+            <a href="cashier-dashboard.html" class="btn-quick cashier" onclick="setDemoUser('kasir', 'Cashier')">
+              💵 Kasir POS
+            </a>
+            <a href="kitchen-dashboard.html" class="btn-quick kitchen" onclick="setDemoUser('kitchen', 'Kitchen')">
+              🍳 Dapur KDS
+            </a>
+            <a href="customer-menu.html?table=1" class="btn-quick customer">
+              📱 QR Meja 01
+            </a>
+            <a href="waiter.html" class="btn-quick waiter" onclick="setDemoUser('waiter', 'Waiter')">
+              🧑‍🍳 Pelayan (Waiter)
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-text">
+          <p>© 2025 Cafe Management & QR Table Ordering System</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setDemoUser(username, role) {
+      if (window.CafeStore) {
+        window.CafeStore.setCurrentUser({ username, role });
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim().toLowerCase();
+      const errBox = document.getElementById('errorMsg');
+      errBox.style.display = 'none';
+
+      let targetRole = 'SuperAdmin';
+      let targetPath = 'admin-dashboard.html';
+
+      if (u.includes('admin')) {
+        targetRole = 'SuperAdmin';
+        targetPath = 'admin-dashboard.html';
+      } else if (u.includes('kasir') || u.includes('cashier')) {
+        targetRole = 'Cashier';
+        targetPath = 'cashier-dashboard.html';
+      } else if (u.includes('kitchen') || u.includes('dapur')) {
+        targetRole = 'Kitchen';
+        targetPath = 'kitchen-dashboard.html';
+      } else if (u.includes('waiter') || u.includes('pelayan')) {
+        targetRole = 'Waiter';
+        targetPath = 'waiter.html';
+      } else {
+        targetRole = 'SuperAdmin';
+        targetPath = 'admin-dashboard.html';
+      }
+
+      setDemoUser(u, targetRole);
+      window.location.href = targetPath;
+    });
+  </script>
+</body>
+</html>

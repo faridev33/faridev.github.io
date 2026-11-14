@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konfirmasi Pesanan - Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background-color: #1e1e1e;">
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="customer-viewport">
+    <div class="mobile-wrapper">
+      
+      <!-- Customer Header with Back Button -->
+      <header class="customer-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <a href="customer-menu.html" id="btnBackToMenu" style="font-size:18px; font-weight:bold; text-decoration:none;">❮</a>
+          <h1 class="cafe-title" style="font-size:20px;">Rincian Pesanan</h1>
+        </div>
+        <div class="table-info" id="tableBadgeDisplay">
+          Meja 01
+        </div>
+      </header>
+
+      <!-- Main Order Content -->
+      <div class="order-page-body" id="orderContentArea">
+        
+        <!-- Customer Info Box -->
+        <div class="order-box">
+          <div class="order-box-title">
+            <span>👤</span>
+            <span>Identitas Pemesan</span>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="customerNameInput" style="font-size: 12px;">Nama Lengkap Pemesan:</label>
+            <input 
+              type="text" 
+              id="customerNameInput" 
+              class="form-input" 
+              placeholder="Contoh: Budi Santoso"
+              required 
+            />
+          </div>
+        </div>
+
+        <!-- Cart Items Box -->
+        <div class="order-box">
+          <div class="order-box-title">
+            <span>☕</span>
+            <span>Daftar Menu Dipilih</span>
+          </div>
+          <div id="cartItemsContainer">
+            <!-- Injected by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Payment Method Box -->
+        <div class="order-box">
+          <div class="order-box-title">
+            <span>💳</span>
+            <span>Metode Pembayaran</span>
+          </div>
+
+          <label class="payment-option-label selected" id="optPayCash">
+            <input type="radio" name="paymentMethod" value="cash" checked style="accent-color: var(--color-dark-coffee);">
+            <div>
+              <div style="font-size:13px; font-weight:600;">Bayar di Kasir (Tunai / EDC)</div>
+              <div style="font-size:11px; color:#666;">Silakan selesaikan pembayaran ke meja kasir setelah pesan.</div>
+            </div>
+          </label>
+
+          <label class="payment-option-label" id="optPayQris">
+            <input type="radio" name="paymentMethod" value="qris" style="accent-color: var(--color-dark-coffee);">
+            <div>
+              <div style="font-size:13px; font-weight:600;">QRIS Pembayaran Digital (Instant)</div>
+              <div style="font-size:11px; color:#666;">Scan QRIS via BCA, GoPay, OVO, Dana, ShopeePay langsung.</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Summary Calculation Box -->
+        <div class="order-box">
+          <div class="order-box-title">
+            <span>📋</span>
+            <span>Ringkasan Biaya</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Subtotal Item</span>
+            <span id="subtotalVal">Rp 0</span>
+          </div>
+          <div class="summary-row">
+            <span>Pajak Resto (10%)</span>
+            <span id="taxVal">Rp 0</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total Akhir</span>
+            <span id="grandTotalVal">Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Send Order Button -->
+        <div style="margin-top: 20px;">
+          <button type="button" class="btn-primary" id="btnSubmitOrder" style="padding: 14px; font-size: 15px; border-radius: 50px;">
+            🚀 Kirim Pesanan Sekarang
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QRIS SIMULATION MODAL -->
+  <div class="modal-overlay" id="qrisSimulationModal">
+    <div class="modal-box" style="text-align: center; max-width: 380px;">
+      <h3 style="margin: 0 0 10px 0;">Scan QRIS Cafe Fari</h3>
+      <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Gunakan aplikasi e-wallet atau mobile banking favorit Anda</p>
+      
+      <!-- Mock QRIS Image / Graphic -->
+      <div style="background: white; border: 2px solid #222; border-radius: 12px; padding: 16px; display: inline-block; margin-bottom: 15px;">
+        <svg width="180" height="180" viewBox="0 0 100 100" style="display:block; margin:0 auto;">
+          <!-- Simple mock QR pattern -->
+          <rect width="100" height="100" fill="#fff" />
+          <rect x="5" y="5" width="28" height="28" fill="#111" />
+          <rect x="8" y="8" width="22" height="22" fill="#fff" />
+          <rect x="12" y="12" width="14" height="14" fill="#111" />
+
+          <rect x="67" y="5" width="28" height="28" fill="#111" />
+          <rect x="70" y="8" width="22" height="22" fill="#fff" />
+          <rect x="74" y="12" width="14" height="14" fill="#111" />
+
+          <rect x="5" y="67" width="28" height="28" fill="#111" />
+          <rect x="8" y="70" width="22" height="22" fill="#fff" />
+          <rect x="12" y="74" width="14" height="14" fill="#111" />
+
+          <!-- Random QR matrix cells -->
+          <rect x="40" y="10" width="8" height="8" fill="#111" />
+          <rect x="52" y="10" width="8" height="8" fill="#111" />
+          <rect x="40" y="25" width="14" height="8" fill="#111" />
+          <rect x="40" y="40" width="8" height="14" fill="#111" />
+          <rect x="52" y="40" width="14" height="8" fill="#111" />
+          <rect x="70" y="40" width="10" height="10" fill="#111" />
+          <rect x="10" y="40" width="14" height="8" fill="#111" />
+          <rect x="25" y="50" width="10" height="10" fill="#111" />
+          <rect x="40" y="60" width="20" height="10" fill="#111" />
+          <rect x="70" y="65" width="15" height="15" fill="#111" />
+          <rect x="40" y="75" width="10" height="15" fill="#111" />
+          <rect x="55" y="80" width="15" height="10" fill="#111" />
+        </svg>
+      </div>
+
+      <div style="font-weight: 700; font-size: 18px; color: var(--color-dark-coffee); margin-bottom: 5px;" id="qrisModalTotal">
+        Rp 0
+      </div>
+      <div style="font-size: 11px; color: #888; margin-bottom: 20px;">NMID: ID102030405060708</div>
+
+      <div id="qrisLoadingMsg" style="display:none; color: var(--color-green-success); font-weight:600; font-size:14px; margin-bottom:15px;">
+        ⏳ Menunggu verifikasi pembayaran...
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn-secondary" id="btnCancelQris" style="flex: 1; padding: 10px;">Batal</button>
+        <button type="button" class="btn-add" id="btnSimulateSuccessQris" style="flex: 2; padding: 10px; justify-content:center; background:#27ae60;">
+          ✔ Simulasikan Lunas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableId = urlParams.get('table') || '1';
+    document.getElementById('tableBadgeDisplay').textContent = 'Meja ' + (tableId.padStart(2, '0'));
+    document.getElementById('btnBackToMenu').href = `customer-menu.html?table=${tableId}`;
+
+    let cart = window.CafeStore.getCart(tableId);
+
+    // Render cart items
+    function renderCart() {
+      const container = document.getElementById('cartItemsContainer');
+      container.innerHTML = '';
+
+      if (!cart || cart.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 30px 10px; color:#888;">
+            <div style="font-size:32px; margin-bottom:8px;">🛒</div>
+            <p style="margin:0 0 12px 0;">Keranjang pesanan masih kosong.</p>
+            <a href="customer-menu.html?table=${tableId}" class="btn-add" style="display:inline-block; font-size:12px;">+ Pilih Menu Dulu</a>
+          </div>
+        `;
+        document.getElementById('btnSubmitOrder').disabled = true;
+        document.getElementById('btnSubmitOrder').style.opacity = '0.5';
+        updateTotals(0);
+        return;
+      }
+
+      document.getElementById('btnSubmitOrder').disabled = false;
+      document.getElementById('btnSubmitOrder').style.opacity = '1';
+
+      let subtotal = 0;
+
+      cart.forEach((item, index) => {
+        subtotal += item.price * item.quantity;
+        const row = document.createElement('div');
+        row.className = 'cart-item-row';
+        row.innerHTML = `
+          <div class="cart-item-details">
+            <div class="cart-item-name">${item.name}</div>
+            ${item.optionsText ? `<div class="cart-item-options">${item.optionsText}</div>` : ''}
+            ${item.note ? `<div class="cart-item-note">📝 ${item.note}</div>` : ''}
+            <div style="font-weight:700; font-size:13px; color:var(--color-dark-coffee); margin-top:4px;">
+              ${window.CafeStore.formatRupiah(item.price * item.quantity)}
+            </div>
+          </div>
+          <div class="cart-item-controls">
+            <button type="button" class="btn-qty" onclick="changeQty(${index}, -1)">-</button>
+            <span class="cart-item-qty">${item.quantity}</span>
+            <button type="button" class="btn-qty" onclick="changeQty(${index}, 1)">+</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      updateTotals(subtotal);
+    }
+
+    function changeQty(index, delta) {
+      if (cart[index]) {
+        cart[index].quantity += delta;
+        if (cart[index].quantity <= 0) {
+          if (confirm('Hapus menu ini dari pesanan?')) {
+            cart.splice(index, 1);
+          } else {
+            cart[index].quantity = 1;
+          }
+        }
+        window.CafeStore.saveCart(tableId, cart);
+        renderCart();
+      }
+    }
+
+    let calculatedGrandTotal = 0;
+
+    function updateTotals(subtotal) {
+      const tax = Math.round(subtotal * 0.1);
+      calculatedGrandTotal = subtotal + tax;
+
+      document.getElementById('subtotalVal').textContent = window.CafeStore.formatRupiah(subtotal);
+      document.getElementById('taxVal').textContent = window.CafeStore.formatRupiah(tax);
+      document.getElementById('grandTotalVal').textContent = window.CafeStore.formatRupiah(calculatedGrandTotal);
+      document.getElementById('qrisModalTotal').textContent = window.CafeStore.formatRupiah(calculatedGrandTotal);
+    }
+
+    // Payment Option selection styling
+    const optCash = document.getElementById('optPayCash');
+    const optQris = document.getElementById('optPayQris');
+
+    optCash.addEventListener('click', () => {
+      optCash.classList.add('selected');
+      optQris.classList.remove('selected');
+    });
+
+    optQris.addEventListener('click', () => {
+      optQris.classList.add('selected');
+      optCash.classList.remove('selected');
+    });
+
+    // Submit Order
+    document.getElementById('btnSubmitOrder').addEventListener('click', () => {
+      const name = document.getElementById('customerNameInput').value.trim();
+      if (!name) {
+        alert('Silakan masukkan nama pemesan terlebih dahulu.');
+        document.getElementById('customerNameInput').focus();
+        return;
+      }
+
+      if (!cart || cart.length === 0) {
+        alert('Keranjang masih kosong!');
+        return;
+      }
+
+      const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+      if (method === 'qris') {
+        // Open QRIS simulation modal
+        document.getElementById('qrisSimulationModal').classList.add('active');
+      } else {
+        // Pay at Cashier
+        finalizeOrder('Tunai (Kasir)', 'UNPAID', name);
+      }
+    });
+
+    document.getElementById('btnCancelQris').addEventListener('click', () => {
+      document.getElementById('qrisSimulationModal').classList.remove('active');
+    });
+
+    document.getElementById('btnSimulateSuccessQris').addEventListener('click', () => {
+      const name = document.getElementById('customerNameInput').value.trim();
+      document.getElementById('qrisLoadingMsg').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('qrisSimulationModal').classList.remove('active');
+        finalizeOrder('QRIS', 'PAID', name);
+      }, 1000);
+    });
+
+    function finalizeOrder(method, paymentStatus, customerName) {
+      const newOrder = window.CafeStore.createOrder({
+        table_id: tableId,
+        customer_name: customerName,
+        payment_method: method,
+        payment_status: paymentStatus,
+        total_price: calculatedGrandTotal,
+        items: cart
+      });
+
+      // Clear table cart
+      window.CafeStore.clearCart(tableId);
+
+      alert('✅ Pesanan berhasil dikirim ke Dapur dan Kasir!');
+      window.location.href = `customer-status.html?table=${tableId}&orderId=${newOrder.id}`;
+    }
+
+    // Initial render
+    renderCart();
+  </script>
+</body>
+</html>

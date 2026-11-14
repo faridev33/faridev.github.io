@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dapur (KDS) - Antrian Masak | Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- Kitchen Sidebar -->
+    <aside class="sidebar kitchen-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">KITCHEN</h2>
+        <span class="sidebar-subtitle">Display System (KDS)</span>
+        <div style="margin-top: 10px; font-size: 13px; color: #fff; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">
+          👨‍🍳 Chef Junaedi
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="kitchen-dashboard.html" class="menu-link active">
+            <span>🍳</span>
+            <span>Antrian Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="kitchen-history.html" class="menu-link">
+            <span>📜</span>
+            <span>Riwayat Masak</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="kitchen-menu.html" class="menu-link">
+            <span>📦</span>
+            <span>Stok Menu (86)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar Shift</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Antrian Dapur Aktif</h1>
+          <p class="page-subtitle">Tiket pesanan masuk secara real-time dari QR Meja pelanggan.</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <span id="activeCountBadge" style="background:var(--color-orange-kitchen); color:white; font-size:12px; font-weight:700; padding:6px 12px; border-radius:20px;">
+            0 Pesanan Aktif
+          </span>
+          <button class="btn-add" id="btnRefreshKitchen" style="background:#2d3436;">
+            🔄 Refresh Antrian
+          </button>
+        </div>
+      </div>
+
+      <!-- Tickets Grid -->
+      <div class="kitchen-grid" id="kitchenTicketsGrid">
+        <!-- Injected by JavaScript -->
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function renderTickets() {
+      const activeOrders = window.CafeStore.getActiveKitchenOrders();
+      const grid = document.getElementById('kitchenTicketsGrid');
+      const badge = document.getElementById('activeCountBadge');
+      
+      badge.textContent = `${activeOrders.length} Pesanan Aktif`;
+      grid.innerHTML = '';
+
+      if (activeOrders.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; background: white; padding: 60px 20px; text-align: center; border-radius: 12px; color: #777; box-shadow: var(--shadow-soft);">
+            <div style="font-size: 48px; margin-bottom: 10px;">🍳✨</div>
+            <h3 style="margin: 0 0 6px 0; color: var(--color-deep-dark);">Semua Pesanan Selesai!</h3>
+            <p style="margin: 0; font-size: 13px;">Tidak ada antrian pesanan saat ini. Dapur siap menerima order baru.</p>
+          </div>
+        `;
+        return;
+      }
+
+      activeOrders.forEach(order => {
+        const isPaid = (order.payment_status === 'PAID');
+        const card = document.createElement('div');
+        card.className = 'order-ticket';
+
+        const timeStr = window.CafeStore.formatTime(order.created_at);
+
+        card.innerHTML = `
+          <div class="ticket-header">
+            <div>
+              <div class="table-number">Meja ${order.table_id}</div>
+              <div style="font-size: 12px; color: #666; font-weight: 500;">${order.customer_name}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 11px; color: #888; margin-bottom: 4px;">⏱️ ${timeStr}</div>
+              <span class="status-badge ${isPaid ? 'paid' : 'unpaid'}">
+                ${order.payment_status}
+              </span>
+            </div>
+          </div>
+
+          <div class="ticket-items">
+            <ul>
+              ${order.items.map(item => `
+                <li class="ticket-item">
+                  <div class="ticket-item-top">
+                    <span class="qty-badge">${item.quantity}x</span>
+                    <strong style="color:#2d3436;">${item.name}</strong>
+                  </div>
+                  ${(item.optionsText || item.note) ? `
+                    <div class="item-note">
+                      ${item.optionsText ? `<span>${item.optionsText}</span>` : ''}
+                      ${item.note ? `<span> | 📝 ${item.note}</span>` : ''}
+                    </div>
+                  ` : ''}
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+
+          <div style="margin-top: 15px;">
+            <button class="btn-done" onclick="completeCooking(${order.id})">
+              ✅ Selesai Masak
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function completeCooking(orderId) {
+      if (confirm(`Tandai pesanan #${orderId} sudah selesai dimasak?`)) {
+        window.CafeStore.updateOrderStatus(orderId, {
+          cooking_status: 'DONE',
+          waiter_status: 'READY'
+        });
+        renderTickets();
+      }
+    }
+
+    document.getElementById('btnRefreshKitchen').addEventListener('click', () => {
+      renderTickets();
+    });
+
+    // Auto-update live when new orders come in
+    window.addEventListener('cafefari:update', (e) => {
+      if (e.detail && e.detail.topic === 'orders') {
+        renderTickets();
+      }
+    });
+
+    // Initial render
+    renderTickets();
+  </script>
+</body>
+</html>

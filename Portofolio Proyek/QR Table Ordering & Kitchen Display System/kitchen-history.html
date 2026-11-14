@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riwayat Masak - Dapur Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- Kitchen Sidebar -->
+    <aside class="sidebar kitchen-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">KITCHEN</h2>
+        <span class="sidebar-subtitle">Display System (KDS)</span>
+        <div style="margin-top: 10px; font-size: 13px; color: #fff; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">
+          👨‍🍳 Chef Junaedi
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="kitchen-dashboard.html" class="menu-link">
+            <span>🍳</span>
+            <span>Antrian Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="kitchen-history.html" class="menu-link active">
+            <span>📜</span>
+            <span>Riwayat Masak</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="kitchen-menu.html" class="menu-link">
+            <span>📦</span>
+            <span>Stok Menu (86)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar Shift</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Riwayat Pesanan Selesai Dimasak</h1>
+          <p class="page-subtitle">Daftar hidangan yang telah dipersiapkan oleh tim dapur.</p>
+        </div>
+      </div>
+
+      <!-- Tickets Grid -->
+      <div class="kitchen-grid" id="historyTicketsGrid">
+        <!-- Injected by JavaScript -->
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function renderHistory() {
+      const historyOrders = window.CafeStore.getKitchenHistoryOrders();
+      const grid = document.getElementById('historyTicketsGrid');
+      grid.innerHTML = '';
+
+      if (historyOrders.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; background: white; padding: 60px 20px; text-align: center; border-radius: 12px; color: #777;">
+            <p>Belum ada riwayat masakan selesai hari ini.</p>
+          </div>
+        `;
+        return;
+      }
+
+      historyOrders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-ticket done';
+        const timeStr = window.CafeStore.formatTime(order.created_at);
+
+        card.innerHTML = `
+          <div class="ticket-header">
+            <div>
+              <div class="table-number">Meja ${order.table_id}</div>
+              <div style="font-size: 12px; color: #666;">${order.customer_name}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 11px; color: #888;">⏱️ ${timeStr}</div>
+              <span class="status-badge done" style="margin-top:4px;">✔ SELESAI</span>
+            </div>
+          </div>
+
+          <div class="ticket-items">
+            <ul>
+              ${order.items.map(item => `
+                <li class="ticket-item">
+                  <div class="ticket-item-top">
+                    <span class="qty-badge" style="background:#27ae60;">${item.quantity}x</span>
+                    <strong>${item.name}</strong>
+                  </div>
+                  ${(item.optionsText || item.note) ? `
+                    <div class="item-note" style="color:#27ae60; background:#e8f8f0;">
+                      ${item.optionsText || ''} ${item.note ? `| ${item.note}` : ''}
+                    </div>
+                  ` : ''}
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    renderHistory();
+  </script>
+</body>
+</html>

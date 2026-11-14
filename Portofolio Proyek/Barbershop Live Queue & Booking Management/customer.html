@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Pelanggan – Barbershop Premier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script>(function(){const t=localStorage.getItem("portfolio-theme")||"dark";document.documentElement.setAttribute("data-theme",t)})();</script>
+</head>
+<body>
+
+  <!-- ============================================ -->
+  <!-- CUSTOMER TOP HEADER                          -->
+  <!-- ============================================ -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="index.html" class="back-link" title="Kembali ke Beranda">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Beranda</span>
+        </a>
+        <div class="brand-divider"></div>
+        <div class="brand-info">
+          <div class="brand-logo"><i class="fa-solid fa-scissors"></i></div>
+          <div>
+            <div class="brand-title-row">
+              <h1 class="brand-name">Barbershop Premier</h1>
+              <span class="badge-tech">Self-Service Booking</span>
+            </div>
+            <p class="brand-sub">Reservasi Mandiri & Antrean Digital Pelanggan</p>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="live-status-pill" id="headerLiveStatusPill" title="Status Antrean">
+          <span class="pulse-indicator"></span>
+          <span class="pill-label">Sedang Cukur:</span>
+          <strong id="headerServingNumber">#03 (Kursi 1)</strong>
+          <span class="pill-divider">|</span>
+          <span class="pill-sub" id="headerQueueWaiting">3 Menunggu</span>
+        </div>
+        <a href="admin.html" class="btn btn-outline btn-sm" style="margin-left:8px;">
+          <i class="fa-solid fa-gauge-high"></i> Dashboard Admin
+        </a>
+        <button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Ganti tema">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================ -->
+  <!-- MAIN CUSTOMER CONTENT                        -->
+  <!-- ============================================ -->
+  <main class="app-main">
+    <div class="customer-wrapper">
+
+      <!-- Live Queue Monitor Hero -->
+      <div class="customer-radar-hero">
+        <div class="radar-content">
+          <span class="radar-tag"><i class="fa-solid fa-satellite-dish"></i> REAL-TIME ANTRIAN SALON</span>
+          <h2 class="radar-title">Pantau Antrean & Reservasi Online</h2>
+          <p class="radar-desc">
+            Pesan nomor antrean dari smartphone Anda, pilih kapster langganan, dan nikmati waktu tunggu tanpa harus berdiri lama di barbershop.
+          </p>
+        </div>
+        <div class="radar-cards-row">
+          <div class="radar-card highlight-serving">
+            <div class="radar-card-head">
+              <i class="fa-solid fa-scissors"></i>
+              <span>SEDANG DILAYANI</span>
+            </div>
+            <div class="radar-big-num" id="custServingNum">#03</div>
+            <div class="radar-sub" id="custServingDetail">Budi Pratama • Kursi 1</div>
+          </div>
+          <div class="radar-card">
+            <div class="radar-card-head">
+              <i class="fa-solid fa-users"></i>
+              <span>SISA MENUNGGU</span>
+            </div>
+            <div class="radar-big-num" id="custWaitingNum">3 Orang</div>
+            <div class="radar-sub">Estimasi Waktu Tunggu: <strong id="custWaitTime">~25 Menit</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Booking Steps -->
+      <div class="booking-flow-card">
+        <!-- Stepper Progress Header -->
+        <div class="flow-steps-header">
+          <div class="step-indicator active" id="stepIndicator1">
+            <span class="step-num">1</span>
+            <span class="step-text">Data & Kapster</span>
+          </div>
+          <div class="step-line" id="stepLine1"></div>
+          <div class="step-indicator" id="stepIndicator2">
+            <span class="step-num">2</span>
+            <span class="step-text">Pilih Layanan</span>
+          </div>
+          <div class="step-line" id="stepLine2"></div>
+          <div class="step-indicator" id="stepIndicator3">
+            <span class="step-num">3</span>
+            <span class="step-text">Bayar QRIS</span>
+          </div>
+          <div class="step-line" id="stepLine3"></div>
+          <div class="step-indicator" id="stepIndicator4">
+            <span class="step-num">4</span>
+            <span class="step-text">Tiket Antrean</span>
+          </div>
+        </div>
+
+        <!-- STEP 1: CUSTOMER DATA & BARBER SELECTION -->
+        <div class="step-panel active" id="panelStep1">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-user-check text-blue"></i> Masukkan Data Diri & Pilih Kapster</h3>
+            <p>Isi informasi kontak untuk notifikasi panggilan antrean WhatsApp otomatis.</p>
+          </div>
+          <div class="form-grid-customer">
+            <div class="form-group">
+              <label for="custInputName">Nama Lengkap Pelanggan *</label>
+              <div class="input-with-icon">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="custInputName" class="form-control" placeholder="Contoh: Dimas Aditya" value="Dimas Aditya" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="custInputPhone">Nomor WhatsApp Aktif *</label>
+              <div class="input-with-icon">
+                <i class="fa-brands fa-whatsapp text-green"></i>
+                <input type="tel" id="custInputPhone" class="form-control" placeholder="0812-3456-7890" value="081288776655" required />
+              </div>
+            </div>
+          </div>
+          <div class="barber-select-section">
+            <label class="form-label-bold">Pilih Kapster / Tukang Potong Favorit:</label>
+            <div class="barbers-grid" id="barberSelectionGrid"></div>
+          </div>
+          <div class="panel-footer">
+            <button class="btn btn-primary" onclick="app.goToBookingStep(2)">
+              <span>Lanjut Pilih Layanan</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: SERVICE SELECTION -->
+        <div class="step-panel" id="panelStep2">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-tags text-amber"></i> Pilih Layanan Grooming & Paket Cukur</h3>
+            <p>Anda dapat memilih lebih dari satu layanan (kombinasi potong, cuci, creambath, atau pewarnaan).</p>
+          </div>
+          <div class="services-cards-grid" id="customerServiceCardsGrid"></div>
+          <div class="booking-total-summary-strip">
+            <div class="total-left">
+              <span class="total-label">Total Pembayaran:</span>
+              <h3 class="total-price-large" id="custTotalPriceDisplay">Rp 0</h3>
+              <span class="total-services-count" id="custSelectedServicesLabel">0 Layanan Dipilih</span>
+            </div>
+            <div class="total-right">
+              <button class="btn btn-outline" onclick="app.goToBookingStep(1)">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+              </button>
+              <button class="btn btn-primary" id="btnToPaymentStep" onclick="app.goToBookingStep(3)">
+                <span>Lanjut Pembayaran QRIS</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: QRIS PAYMENT SIMULATION -->
+        <div class="step-panel" id="panelStep3">
+          <div class="panel-header text-center">
+            <h3><i class="fa-solid fa-qrcode text-green"></i> Pembayaran QRIS Real-Time</h3>
+            <p>Scan kode QRIS di bawah menggunakan GoPay, OVO, Dana, BCA Mobile, atau Livin' Mandiri.</p>
+          </div>
+          <div class="qris-payment-box">
+            <div class="qris-amount-badge">
+              <span>TOTAL TAGIHAN</span>
+              <h2 id="qrisAmountText">Rp 55.000</h2>
+            </div>
+            <div class="qris-code-frame">
+              <div class="qris-header-logo">
+                <span class="qris-logo-text">QRIS</span>
+                <span class="qris-tagline">STANDAR PEMBAYARAN NASIONAL</span>
+              </div>
+              <div class="qris-qr-wrapper">
+                <svg class="qris-svg" viewBox="0 0 200 200">
+                  <rect width="200" height="200" fill="#ffffff"/>
+                  <rect x="20" y="20" width="45" height="45" fill="#000000"/>
+                  <rect x="25" y="25" width="35" height="35" fill="#ffffff"/>
+                  <rect x="32" y="32" width="21" height="21" fill="#000000"/>
+                  <rect x="135" y="20" width="45" height="45" fill="#000000"/>
+                  <rect x="140" y="25" width="35" height="35" fill="#ffffff"/>
+                  <rect x="147" y="32" width="21" height="21" fill="#000000"/>
+                  <rect x="20" y="135" width="45" height="45" fill="#000000"/>
+                  <rect x="25" y="140" width="35" height="35" fill="#ffffff"/>
+                  <rect x="32" y="147" width="21" height="21" fill="#000000"/>
+                  <rect x="75" y="25" width="12" height="12" fill="#000000"/>
+                  <rect x="95" y="25" width="18" height="12" fill="#000000"/>
+                  <rect x="75" y="45" width="30" height="12" fill="#000000"/>
+                  <rect x="115" y="45" width="12" height="30" fill="#000000"/>
+                  <rect x="30" y="75" width="15" height="12" fill="#000000"/>
+                  <rect x="55" y="75" width="12" height="25" fill="#000000"/>
+                  <rect x="75" y="75" width="20" height="20" fill="#000000"/>
+                  <rect x="105" y="85" width="30" height="12" fill="#000000"/>
+                  <rect x="145" y="75" width="35" height="12" fill="#000000"/>
+                  <rect x="145" y="95" width="15" height="25" fill="#000000"/>
+                  <rect x="25" y="110" width="25" height="12" fill="#000000"/>
+                  <rect x="75" y="110" width="12" height="25" fill="#000000"/>
+                  <rect x="95" y="110" width="30" height="12" fill="#000000"/>
+                  <rect x="135" y="130" width="20" height="20" fill="#000000"/>
+                  <rect x="165" y="130" width="15" height="35" fill="#000000"/>
+                  <rect x="75" y="145" width="25" height="12" fill="#000000"/>
+                  <rect x="110" y="145" width="15" height="30" fill="#000000"/>
+                  <rect x="75" y="165" width="25" height="15" fill="#000000"/>
+                </svg>
+              </div>
+              <div class="qris-merchant-info">
+                <strong>BARBERSHOP PREMIER & CO</strong>
+                <span>NMID: ID1020304050607</span>
+              </div>
+            </div>
+            <div class="payment-steps-list">
+              <div class="p-step-item"><span class="badge-num">1</span> Buka Mobile Banking / E-Wallet (BCA, Mandiri, GoPay, OVO, ShopeePay)</div>
+              <div class="p-step-item"><span class="badge-num">2</span> Arahkan kamera scan ke kode QRIS di atas</div>
+              <div class="p-step-item"><span class="badge-num">3</span> Pastikan nominal pembayaran sesuai tagihan lalu konfirmasi PIN</div>
+            </div>
+            <div class="qris-action-buttons">
+              <button class="btn btn-outline" onclick="app.goToBookingStep(2)">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+              </button>
+              <button class="btn btn-success btn-large" id="btnConfirmPayment" onclick="app.completePaymentAndCreateQueue()">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Simulasi: Saya Sudah Bayar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: BOOKING SUCCESS & DIGITAL TICKET -->
+        <div class="step-panel" id="panelStep4">
+          <div class="ticket-success-container">
+            <div class="ticket-card">
+              <div class="ticket-cut-top"></div>
+              <div class="ticket-header">
+                <div class="ticket-success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h3>Tiket Reservasi Berhasil!</h3>
+                <p>Tunjukkan tiket ini kepada kapster / kasir saat nomor Anda dipanggil.</p>
+              </div>
+              <div class="ticket-queue-box">
+                <div class="ticket-queue-label">NOMOR ANTREAN ANDA</div>
+                <div class="ticket-big-number" id="ticketNumberDisplay">#05</div>
+                <div class="ticket-queue-sub" id="ticketStatusBadge">STATUS: MENUNGGU GILIRAN</div>
+              </div>
+              <div class="ticket-detail-rows">
+                <div class="t-row"><span>Nama Pelanggan:</span><strong id="ticketCustomerName">Dimas Aditya</strong></div>
+                <div class="t-row"><span>Kapster Dipilih:</span><strong id="ticketBarberName">Budi Pratama</strong></div>
+                <div class="t-row"><span>Layanan:</span><strong id="ticketServiceList">Potong Rambut Classic + Cuci</strong></div>
+                <div class="t-row"><span>Sesi Operasional:</span><strong id="ticketSessionName">Sesi 1 (Pagi)</strong></div>
+                <div class="t-row total"><span>Total Dibayar:</span><strong class="text-green" id="ticketTotalPaid">Rp 55.000 (Lunas)</strong></div>
+              </div>
+              <div class="ticket-footer-actions">
+                <button class="btn btn-primary" onclick="app.saveTicketNotification()">
+                  <i class="fa-solid fa-download"></i> Simpan / Cetak Tiket
+                </button>
+                <button class="btn btn-outline" onclick="app.resetCustomerBooking()">
+                  <i class="fa-solid fa-rotate-left"></i> Buat Reservasi Baru
+                </button>
+                <a href="admin.html" class="btn btn-secondary">
+                  <i class="fa-solid fa-gauge-high"></i> Lihat di Dashboard Kasir
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

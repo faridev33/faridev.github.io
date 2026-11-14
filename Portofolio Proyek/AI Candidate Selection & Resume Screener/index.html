@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Candidate Selection & Resume Screener – Demo Portofolio</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Theme Pre-Initialization (Prevents FOUC) -->
+  <script>
+    (function () {
+      const saved = localStorage.getItem("portfolio-theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+    })();
+  </script>
+</head>
+<body>
+  <!-- TOPBAR / HEADER -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="../../index.html" class="back-link" title="Kembali ke Beranda Portofolio">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Portofolio</span>
+        </a>
+        <div class="brand-divider"></div>
+        <div class="brand-info">
+          <div class="brand-logo">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div>
+            <div class="brand-title-row">
+              <h1 class="brand-name">AI Candidate Selection & Resume Screener</h1>
+              <span class="badge-tech">Qwen 3.8 Max • PyMuPDF4LLM</span>
+            </div>
+            <p class="brand-sub">Sistem Skrining CV Massal Otonom & Matriks Evaluasi Komparatif Multi-Kandidat</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Session Selector Dropdown -->
+        <div class="session-picker-box">
+          <label for="sessionSelect"><i class="fa-solid fa-briefcase"></i> Sesi Aktif:</label>
+          <select id="sessionSelect" class="session-select">
+            <option value="arch">Senior Architect & Interior Designer</option>
+            <option value="ai">Lead Full-Stack AI Engineer</option>
+          </select>
+          <button class="btn-icon" id="btnNewSession" title="Tambah Sesi Rekrutmen Baru">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+
+        <!-- Token Usage Pill -->
+        <div class="token-pill" id="tokenHeaderPill" title="Klik untuk rincian token & biaya inference">
+          <span class="pulse-indicator"></span>
+          <i class="fa-solid fa-microchip"></i>
+          <span id="headerTokenCount">38,420 Tokens</span>
+          <span class="token-cost-tag" id="headerCostTag">$0.0076</span>
+        </div>
+
+        <!-- Theme Toggle Button (Dark / Light Mode) -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Ganti mode gelap atau terang" title="Ganti mode gelap atau terang">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+          <span class="theme-label" id="themeLabel">Gelap</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="nav-bar">
+      <div class="nav-container">
+        <button class="nav-btn active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard Overview</span>
+        </button>
+        <button class="nav-btn" data-tab="candidates">
+          <i class="fa-solid fa-users"></i>
+          <span>Manajemen CV Pelamar</span>
+          <span class="count-badge" id="candidateCountBadge">5</span>
+        </button>
+        <button class="nav-btn" data-tab="criteria">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Kriteria & Bobot</span>
+          <span class="count-badge" id="criteriaCountBadge">12</span>
+        </button>
+        <button class="nav-btn" data-tab="matrix">
+          <i class="fa-solid fa-table-cells-large"></i>
+          <span>Analisa 3 Tabel AI</span>
+          <span class="badge-glow">Hasil Evaluasi</span>
+        </button>
+        <button class="nav-btn" data-tab="chat">
+          <i class="fa-solid fa-comments"></i>
+          <span>AI Recruiter Chatbot</span>
+        </button>
+        <button class="nav-btn" data-tab="config">
+          <i class="fa-solid fa-gears"></i>
+          <span>Model & Token LLM</span>
+        </button>
+        <button class="nav-btn" data-tab="architecture">
+          <i class="fa-solid fa-network-wired"></i>
+          <span>Arsitektur Sistem</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+    <!-- ======================================================== -->
+    <!-- TAB 1: DASHBOARD OVERVIEW -->
+    <!-- ======================================================== -->
+    <section class="tab-pane active" id="pane-dashboard">
+      <!-- Session Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-content">
+          <div class="hero-tags">
+            <span class="tag-status live"><i class="fa-solid fa-circle"></i> Sesi Berjalan</span>
+            <span class="tag-id" id="dashSessionId">ID: SESI-ARCH-2026</span>
+            <span class="tag-model"><i class="fa-solid fa-brain"></i> Engine: Qwen 3.8 Max (1M Context)</span>
+          </div>
+          <h2 class="hero-title" id="dashJobTitle">Senior Architect & Interior Designer</h2>
+          <p class="hero-desc" id="dashJobDesc">
+            Mencari profesional arsitektur berpengalaman >3 tahun yang menguasai Autodesk Revit (BIM), koordinasi teknis MEP/Struktur, perancangan skematik hingga DED, serta supervisi proyek arsitektur komersial & hospitality.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="btnQuickRunAI">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Jalankan Analisa Ulang AI</span>
+            </button>
+            <button class="btn btn-secondary" id="btnQuickUpload">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Unggah CV Pelamar (PDF)</span>
+            </button>
+            <button class="btn btn-outline" id="btnViewJobDoc">
+              <i class="fa-solid fa-file-lines"></i>
+              <span>Lihat Dokumen Lowongan</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Top Candidate Highlight -->
+        <div class="top-candidate-card">
+          <div class="card-crown">
+            <i class="fa-solid fa-crown"></i>
+            <span>KANDIDAT TERBAIK #1</span>
+          </div>
+          <div class="top-cand-profile">
+            <div class="top-avatar" id="dashTopAvatar">BP</div>
+            <div>
+              <h3 class="top-name" id="dashTopName">Bayu Pratama, S.Ars</h3>
+              <p class="top-role" id="dashTopSub">S1 Arsitektur ITB • 5.5 Tahun Pengalaman</p>
+            </div>
+          </div>
+          <div class="top-cand-score">
+            <div class="score-number-large" id="dashTopScore">94%</div>
+            <div class="score-meta">
+              <span class="badge-status-top" id="dashTopStatus">LOLOS (Rekomendasi Utama)</span>
+              <span class="score-subtext">Skor Kecocokan Kualifikasi & Tanggung Jawab</span>
+            </div>
+          </div>
+          <p class="top-notes" id="dashTopNotes">
+            "Sangat menguasai BIM Revit tingkat lanjut, pengalaman pengerjaan high-rise commercial terbukti, dan bersertifikasi IAI."
+          </p>
+          <button class="btn-sm-action" onclick="app.showCandidateDetail(0)">
+            <span>Lihat Profil Lengkap & CV</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI METRIC CARDS -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon blue"><i class="fa-solid fa-file-pdf"></i></div>
+          <div class="metric-body">
+            <div class="metric-num" id="dashTotalCV">5</div>
+            <div class="metric-label">Total CV Terurai (PDF → MD)</div>
+            <div class="metric-sub">100% Parsing PyMuPDF4LLM Berhasil</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon green"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="metric-body">
+            <div class="metric-num" id="dashShortlisted">3</div>
+            <div class="metric-label">Kandidat Masuk Seleksi</div>
+            <div class="metric-sub">Skor Kecocokan ≥ 70%</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon purple"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="metric-body">
+            <div class="metric-num" id="dashAvgScore">67.2%</div>
+            <div class="metric-label">Rata-Rata Skor Pelamar</div>
+            <div class="metric-sub">Evaluasi 12 Kriteria & Bobot</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon amber"><i class="fa-solid fa-stopwatch-20"></i></div>
+          <div class="metric-body">
+            <div class="metric-num">1.4s</div>
+            <div class="metric-label">Waktu Skrining Per CV</div>
+            <div class="metric-sub">99.5% Lebih Cepat dari Manual</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD SPLIT ROW: RANKING OVERVIEW & RECENT SESSIONS -->
+      <div class="dashboard-split">
+        <!-- Left: Quick Leaderboard Table -->
+        <div class="card-section">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-ranking-star text-amber"></i>
+              <span>Peringkat Seleksi Kandidat (Leaderboard)</span>
+            </div>
+            <a href="javascript:void(0)" class="link-action" onclick="app.switchTab('matrix')">Buka 3 Tabel Matriks →</a>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="dashLeaderboardTable">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">Rank</th>
+                  <th>Kandidat</th>
+                  <th>Pendidikan & Pengalaman</th>
+                  <th style="width: 130px; text-align: center;">Kesesuaian</th>
+                  <th style="width: 170px;">Status Seleksi</th>
+                  <th style="width: 90px; text-align: center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="dashLeaderboardBody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Pipeline Activity & Instant Query -->
+        <div class="card-section">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-comment-dots text-blue"></i>
+              <span>Tanya Cepat AI Recruiter</span>
+            </div>
+            <span class="badge-mini">Online Context</span>
+          </div>
+          <div class="quick-chat-box">
+            <p class="quick-chat-intro">Tanyakan perbandingan instan antar kandidat pada sesi aktif ini:</p>
+            <div class="quick-chips">
+              <button class="chip-btn" onclick="app.runQuickChat('Siapa kandidat yang paling mahir BIM Revit dan software perancangan?')">
+                <i class="fa-solid fa-sparkles"></i> Siapa yang paling mahir Revit?
+              </button>
+              <button class="chip-btn" onclick="app.runQuickChat('Bandingkan kualifikasi Bayu Pratama vs Mohamad Farhan')">
+                <i class="fa-solid fa-scale-balanced"></i> Bayu vs Mohamad Farhan
+              </button>
+              <button class="chip-btn" onclick="app.runQuickChat('Mengapa Rian Adiputra dan Ahmad Zulkarnaen dinyatakan Tidak Lolos?')">
+                <i class="fa-solid fa-circle-xmark"></i> Alasan kandidat ditolak
+              </button>
+            </div>
+
+            <div class="quick-chat-response" id="quickChatOutput">
+              <div class="ai-speech-bubble">
+                <div class="ai-bubble-head">
+                  <i class="fa-solid fa-robot"></i>
+                  <strong>AI Recruiter Specialist:</strong>
+                </div>
+                <div class="ai-bubble-content">
+                  Pilih salah satu prompt cepat di atas atau klik tab <strong>AI Recruiter Chatbot</strong> untuk berdiskusi mendalam mengenai negosiasi gaji, potensi leadership, dan catatan portofolio kandidat.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: MANAJEMEN CV PELAMAR -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-candidates">
+      <!-- Upload Dropzone Simulator -->
+      <div class="upload-dropzone" id="uploadDropzone">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <h3>Unggah Berkas CV Pelamar (PDF)</h3>
+          <p>Tarik & letakkan file resume PDF di sini, atau klik tombol di bawah untuk simulasi pemrosesan PyMuPDF4LLM</p>
+          <div class="dropzone-actions">
+            <button class="btn btn-primary" id="btnSimulateUpload">
+              <i class="fa-solid fa-plus"></i>
+              <span>Simulasikan Tambah CV Kandidat Baru</span>
+            </button>
+            <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;" />
+            <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">
+              <i class="fa-solid fa-folder-open"></i>
+              <span>Pilih File dari Komputer</span>
+            </button>
+          </div>
+          <div class="dropzone-footer">
+            <span><i class="fa-solid fa-shield-halved"></i> Otomatis mengekstrak Kontak, Email, Pendidikan, Pengalaman, dan Skill ke JSON</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingestion Pipeline Progress Banner (Active during upload) -->
+      <div class="pipeline-progress-banner" id="pipelineBanner" style="display: none;">
+        <div class="pipeline-spinner">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </div>
+        <div class="pipeline-info">
+          <h4 id="pipelineStepTitle">Memproses Ingesti Berkas CV...</h4>
+          <p id="pipelineStepDesc">Mengonversi format PDF menjadi Structured Markdown dengan PyMuPDF4LLM...</p>
+        </div>
+        <div class="pipeline-meter">
+          <div class="pipeline-meter-bar" id="pipelineMeterBar" style="width: 45%;"></div>
+        </div>
+      </div>
+
+      <!-- Candidates Roster Card -->
+      <div class="card-section">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-address-card text-blue"></i>
+            <span>Daftar Pelamar Terekstraksi (<span id="candRosterCount">5</span>)</span>
+          </div>
+          <div class="card-actions">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="candidateSearchInput" placeholder="Cari nama, skill, kampus..." />
+            </div>
+            <button class="btn btn-outline btn-sm" id="btnResetCandidates">
+              <i class="fa-solid fa-rotate-left"></i> Reset Sampel
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="candidatesTable">
+            <thead>
+              <tr>
+                <th>Nama Pelamar</th>
+                <th>Kontak & Domisili</th>
+                <th>Pendidikan Terakhir</th>
+                <th>Pengalaman Terakhir</th>
+                <th>Keahlian Terdeteksi</th>
+                <th style="text-align: center;">Format</th>
+                <th style="text-align: center;">Detail</th>
+              </tr>
+            </thead>
+            <tbody id="candidatesTableBody">
+              <!-- Injected by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 3: KRITERIA & PEMBOBOTAN -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-criteria">
+      <!-- Extraction Box -->
+      <div class="criteria-extract-box">
+        <div class="extract-box-left">
+          <div class="extract-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> FITUR CERDAS OTOMATIS</div>
+          <h3>Ekstraksi Kualifikasi dari Dokumen PDF Lowongan Kerja</h3>
+          <p>
+            AI dapat membaca file PDF / TOR Lowongan Kerja secara langsung menggunakan PyMuPDF4LLM, mengekstrak seluruh Kualifikasi (Requirements) dan Tanggung Jawab (Responsibilities), lalu menentukan skala prioritas bobot (1-10) secara objektif.
+          </p>
+        </div>
+        <div class="extract-box-right">
+          <button class="btn btn-light" id="btnTriggerDocExtract">
+            <i class="fa-solid fa-file-import"></i>
+            <span>Simulasikan Ekstraksi Ulang dari Job Desc</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Criteria Management Card -->
+      <div class="card-section">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-sliders text-purple"></i>
+            <span>Daftar Kriteria Penilaian & Bobot Prioritas (<span id="criteriaListCount">12</span> Poin)</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" id="btnResetCriteria">
+              <i class="fa-solid fa-rotate-left"></i> Reset Bobot Default
+            </button>
+          </div>
+        </div>
+
+        <p class="criteria-hint">
+          <i class="fa-solid fa-circle-info"></i> Geser slider bobot (1-10) untuk menguji perubahan skor seleksi kandidat secara langsung pada Matriks 3 Tabel.
+        </p>
+
+        <!-- Criteria List -->
+        <div class="criteria-list" id="criteriaListContainer">
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- Add Manual Criteria Form -->
+        <form class="add-criteria-form" id="addCriteriaForm">
+          <div class="form-row">
+            <div class="form-group type-col">
+              <label for="newCriteriaType">Kategori</label>
+              <select id="newCriteriaType" class="form-control">
+                <option value="kualifikasi">Kualifikasi (Requirement)</option>
+                <option value="tanggung_jawab">Tanggung Jawab (Responsibility)</option>
+              </select>
+            </div>
+            <div class="form-group text-col">
+              <label for="newCriteriaTitle">Deskripsi Kriteria Baru</label>
+              <input type="text" id="newCriteriaTitle" class="form-control" placeholder="Contoh: Menguasai pengerjaan dokumen tender dan RAB konstruksi..." required />
+            </div>
+            <div class="form-group weight-col">
+              <label for="newCriteriaWeight">Bobot (1-10)</label>
+              <select id="newCriteriaWeight" class="form-control font-bold">
+                <option value="10">10 / 10 (Sangat Wajib)</option>
+                <option value="9">9 / 10 (Sangat Wajib)</option>
+                <option value="8" selected>8 / 10 (Penting)</option>
+                <option value="7">7 / 10 (Penting)</option>
+                <option value="6">6 / 10 (Sedang)</option>
+                <option value="5">5 / 10 (Sedang)</option>
+                <option value="4">4 / 10 (Opsional)</option>
+              </select>
+            </div>
+            <div class="form-group btn-col">
+              <label>&nbsp;</label>
+              <button type="submit" class="btn btn-primary btn-block">
+                <i class="fa-solid fa-plus"></i> Tambah Kriteria
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: ANALISA 3 TABEL AI -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-matrix">
+      <!-- AI Action Banner -->
+      <div class="matrix-action-banner">
+        <div class="matrix-banner-text">
+          <div class="matrix-banner-badge">
+            <i class="fa-solid fa-sparkles"></i>
+            <span>MULTI-CANDIDATE COMPARATIVE MATRIX</span>
+          </div>
+          <h3>Evaluasi Simultan 3 Tabel Matriks AI</h3>
+          <p>
+            Menganalisis seluruh pelamar secara sekaligus terhadap kriteria berbobot untuk menghindari bias individual dan menjamin konsistensi penilaian antar kandidat.
+          </p>
+        </div>
+        <div class="matrix-banner-buttons">
+          <button class="btn btn-white" id="btnExecuteAnalysis">
+            <i class="fa-solid fa-play"></i>
+            <span>Jalankan Analisa AI Matriks</span>
+          </button>
+          <button class="btn btn-glass" id="btnExportCSV">
+            <i class="fa-solid fa-file-csv"></i>
+            <span>Ekspor CSV</span>
+          </button>
+          <button class="btn btn-glass" id="btnCopyMarkdownSummary">
+            <i class="fa-solid fa-copy"></i>
+            <span>Salin Ringkasan Markdown</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TABEL 3: KESIMPULAN RINGKASAN & STATUS SELEKSI (DITAMPILKAN PALING ATAS KARENA PALING PENTING BAGI USER) -->
+      <div class="card-section matrix-section highlight-matrix">
+        <div class="card-header gradient-head-blue">
+          <div class="card-title text-white">
+            <i class="fa-solid fa-award text-amber"></i>
+            <span>TABEL 3: Kesimpulan Ringkasan & Hasil Seleksi Kandidat (Final Rank)</span>
+          </div>
+          <span class="badge-white">Terurut Berdasarkan Rekomendasi Tertinggi</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table matrix-table" id="tableSummary">
+            <thead>
+              <tr>
+                <th style="width: 70px; text-align: center;">Rank</th>
+                <th style="min-width: 170px;">Nama Kandidat</th>
+                <th style="width: 140px; text-align: center;">Kesesuaian %</th>
+                <th style="min-width: 320px;">Catatan Utama & Skor Penilaian</th>
+                <th style="min-width: 200px;">Status Rekomendasi</th>
+                <th style="width: 100px; text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tableSummaryBody">
+              <!-- Injected by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABEL 1: EVALUASI PERSYARATAN / KUALIFIKASI -->
+      <div class="card-section matrix-section">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-clipboard-check text-blue"></i>
+            <span>TABEL 1: Evaluasi Terhadap Persyaratan (Requirements Matrix)</span>
+          </div>
+          <div class="legend-box">
+            <span class="legend-item"><span class="symb-check">✔️</span> Memenuhi Penuh</span>
+            <span class="legend-item"><span class="symb-warn">⚠️</span> Sebagian / Catatan</span>
+            <span class="legend-item"><span class="symb-cross">❌</span> Tidak Memenuhi</span>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table matrix-table" id="tableReqMatrix">
+            <thead id="tableReqMatrixHead">
+              <!-- Dynamically populated with candidate columns -->
+            </thead>
+            <tbody id="tableReqMatrixBody">
+              <!-- Dynamically populated with criteria rows and evaluation cells -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABEL 2: EVALUASI TANGGUNG JAWAB -->
+      <div class="card-section matrix-section">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-list-check text-purple"></i>
+            <span>TABEL 2: Evaluasi Terhadap Tanggung Jawab (Responsibilities Matrix)</span>
+          </div>
+          <span class="badge-mini">Kesesuaian Pengalaman Terhadap Job Scope</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table matrix-table" id="tableRespMatrix">
+            <thead id="tableRespMatrixHead">
+              <!-- Dynamically populated with candidate columns -->
+            </thead>
+            <tbody id="tableRespMatrixBody">
+              <!-- Dynamically populated with responsibilities rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 5: AI RECRUITER CHATBOT -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-chat">
+      <div class="chat-layout">
+        <!-- Chat Sidebar: Suggested Prompts & Candidates Quick Select -->
+        <div class="chat-sidebar">
+          <div class="chat-sidebar-card">
+            <h4><i class="fa-solid fa-bolt text-amber"></i> Rekomendasi Pertanyaan HR</h4>
+            <div class="chat-prompt-list">
+              <button class="chat-prompt-item" onclick="app.sendChatMessage('Siapa kandidat nomor satu yang paling siap langsung bekerja?')">
+                <i class="fa-solid fa-user-check"></i>
+                <span>Siapa kandidat nomor satu yang siap kerja?</span>
+              </button>
+              <button class="chat-prompt-item" onclick="app.sendChatMessage('Bandingkan penguasaan software Revit antara Bayu dan Mohamad Farhan')">
+                <i class="fa-solid fa-cubes"></i>
+                <span>Bandingkan skill Revit Bayu vs Farhan</span>
+              </button>
+              <button class="chat-prompt-item" onclick="app.sendChatMessage('Apakah ada kandidat yang memiliki sertifikasi keahlian IAI atau STRA?')">
+                <i class="fa-solid fa-certificate"></i>
+                <span>Cek sertifikasi STRA / IAI kandidat</span>
+              </button>
+              <button class="chat-prompt-item" onclick="app.sendChatMessage('Buatkan draf pertanyaan wawancara teknis khusus untuk Bayu Pratama')">
+                <i class="fa-solid fa-clipboard-question"></i>
+                <span>Draf pertanyaan wawancara Bayu</span>
+              </button>
+              <button class="chat-prompt-item" onclick="app.sendChatMessage('Berikan analisis kelemahan dari kandidat Siti Nurhaliza')">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Analisis kelemahan Siti Nurhaliza</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="chat-sidebar-card">
+            <h4><i class="fa-solid fa-database text-blue"></i> Konteks Memori Kandidat</h4>
+            <ul class="context-candidate-list" id="chatCandidateContextList">
+              <!-- Injected by JavaScript -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Chat Conversation Area -->
+        <div class="chat-window">
+          <div class="chat-header">
+            <div class="chat-agent-info">
+              <div class="agent-avatar"><i class="fa-solid fa-robot"></i></div>
+              <div>
+                <div class="agent-title">AI Recruiter Specialist (Qwen 3.8 Max)</div>
+                <div class="agent-status"><span class="status-dot online"></span> Mengetahui seluruh data CV & 3 Tabel Matriks</div>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btnClearChatHistory" title="Hapus Riwayat Percakapan">
+              <i class="fa-solid fa-trash-can"></i> Bersihkan Chat
+            </button>
+          </div>
+
+          <!-- Chat Stream Messages -->
+          <div class="chat-stream" id="chatStream">
+            <!-- Messages injected dynamically -->
+          </div>
+
+          <!-- Chat Input Bar -->
+          <div class="chat-input-bar">
+            <textarea id="chatInput" rows="1" placeholder="Ketik pertanyaan untuk AI Recruiter seputar kandidat... (Tekan Enter untuk mengirim)"></textarea>
+            <button class="btn btn-primary" id="btnSendChat">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Kirim</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 6: MODEL & TOKEN CONFIG -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-config">
+      <div class="config-grid">
+        <!-- Left: Model Selector & Hyperparameters -->
+        <div class="card-section">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-microchip text-blue"></i>
+              <span>Konfigurasi Model LLM & Parameter Inferensi</span>
+            </div>
+          </div>
+          
+          <div class="config-body">
+            <div class="form-group">
+              <label class="form-label" for="modelSelect">Pilihan LLM Engine (OpenRouter / API)</label>
+              <select id="modelSelect" class="form-control select-large">
+                <option value="qwen/qwen3.8-max" selected>qwen/qwen3.8-max (1,000,000 Context) – Flagship Matriks Komparatif</option>
+                <option value="qwen/qwen3.7-flash">qwen/qwen3.7-flash (1,000,000 Context) – Super Cepat & Efisien</option>
+                <option value="qwen/qwen3-coder-plus">qwen/qwen3-coder-plus (1,000,000 Context) – Spesialis CV IT & Coding</option>
+                <option value="google/gemini-1.5-flash">google/gemini-1.5-flash (1,000,000 Context) – Cepat & Ekonomis</option>
+                <option value="deepseek/deepseek-chat">deepseek/deepseek-chat (DeepSeek V3) – Reasoning Akurat</option>
+              </select>
+              <p class="field-hint">Model `qwen3.8-max` direkomendasikan untuk evaluasi 3 tabel karena konsistensi penalaran multi-dokumen.</p>
+            </div>
+
+            <div class="form-group">
+              <div class="label-row">
+                <label class="form-label">Temperature Parameter (Kestabilan vs Kreativitas)</label>
+                <span class="value-badge" id="tempValueBadge">0.10 (High Precision)</span>
+              </div>
+              <input type="range" id="tempSlider" min="0.0" max="1.0" step="0.05" value="0.10" class="range-slider" />
+              <div class="slider-marks">
+                <span>0.0 (Deterministik)</span>
+                <span>0.1 (Rekomendasi Seleksi CV)</span>
+                <span>1.0 (Kreatif)</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">API Key Status (Simulasi Sandbox)</label>
+              <div class="api-key-input-row">
+                <input type="password" id="inputApiKey" class="form-control font-mono" value="sk-or-v1-987f6543210abcdef987654321fedcba" readonly />
+                <button class="btn btn-outline" id="btnTestApiConnection">
+                  <i class="fa-solid fa-plug"></i> Tes Koneksi
+                </button>
+              </div>
+              <span class="api-status-tag" id="apiStatusTag"><i class="fa-solid fa-circle-check text-green"></i> Terhubung ke OpenRouter API Gateway (Latensi 42ms)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Token Tracker & Economics -->
+        <div class="card-section">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-coins text-amber"></i>
+              <span>Metrik Konsumsi Token & Estimasi Biaya</span>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btnResetTokens">Reset Statistik</button>
+          </div>
+
+          <div class="token-stats-container">
+            <div class="token-stat-card main">
+              <div class="stat-label">TOTAL PENGGUNAAN TOKEN</div>
+              <div class="stat-number" id="statTotalTokens">38,420</div>
+              <div class="stat-sub">Akumulasi seluruh sesi skrining & chatbot</div>
+            </div>
+
+            <div class="token-stat-subgrid">
+              <div class="token-stat-card">
+                <div class="stat-label">Prompt Tokens (Input)</div>
+                <div class="stat-val" id="statPromptTokens">31,240</div>
+                <div class="stat-bar-outer"><div class="stat-bar-inner blue" style="width: 81%;"></div></div>
+              </div>
+              <div class="token-stat-card">
+                <div class="stat-label">Completion Tokens (Output)</div>
+                <div class="stat-val" id="statCompTokens">7,180</div>
+                <div class="stat-bar-outer"><div class="stat-bar-inner purple" style="width: 19%;"></div></div>
+              </div>
+            </div>
+
+            <!-- Cost Comparison Box -->
+            <div class="cost-comparison-card">
+              <h4><i class="fa-solid fa-scale-balanced"></i> Efisiensi Biaya vs HR Manual</h4>
+              <div class="cost-table-row">
+                <span>Estimasi Biaya AI LLM:</span>
+                <strong class="text-green" id="statCostUSD">$0.0076 (Rp 122)</strong>
+              </div>
+              <div class="cost-table-row">
+                <span>Biaya HR Manual (5 CV x 15 mnt @ Rp 50.000/jam):</span>
+                <strong class="text-slate">Rp 62.500</strong>
+              </div>
+              <div class="cost-table-row highlight">
+                <span>Penghematan Anggaran & Waktu:</span>
+                <strong class="text-amber">99.8% Efisiensi Finansial</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 7: ARSITEKTUR SISTEM -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-architecture">
+      <div class="card-section">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-diagram-project text-blue"></i>
+            <span>Arsitektur Sistem: Alur Kerja Skrining Resume Otomatis</span>
+          </div>
+          <span class="badge-tech">End-to-End Pipeline</span>
+        </div>
+
+        <div class="arch-visual-flow">
+          <!-- Flow Step 1 -->
+          <div class="arch-step">
+            <div class="step-badge">Tahap 1</div>
+            <div class="step-icon"><i class="fa-solid fa-file-pdf"></i></div>
+            <h4>Ingesti CV Multi-PDF</h4>
+            <p>Upload berkas resume format PDF dalam jumlah banyak tanpa batasan struktur kolom.</p>
+            <div class="step-tech">Django Multi-Upload API</div>
+          </div>
+
+          <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <!-- Flow Step 2 -->
+          <div class="arch-step">
+            <div class="step-badge">Tahap 2</div>
+            <div class="step-icon"><i class="fa-solid fa-file-code"></i></div>
+            <h4>PyMuPDF4LLM Parsing</h4>
+            <p>Mengonversi dokumen PDF menjadi clean Markdown (.md) sembari mempertahankan tabel & heading.</p>
+            <div class="step-tech">PyMuPDF4LLM Engine</div>
+          </div>
+
+          <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <!-- Flow Step 3 -->
+          <div class="arch-step">
+            <div class="step-badge">Tahap 3</div>
+            <div class="step-icon"><i class="fa-solid fa-address-book"></i></div>
+            <h4>Ekstraksi Kontak & Profil</h4>
+            <p>LLM Single-Pass mengekstrak Nama, Kontak, Pendidikan, Pengalaman, dan Skill ke JSON terstruktur.</p>
+            <div class="step-tech">Single CV Prompting</div>
+          </div>
+
+          <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <!-- Flow Step 4 -->
+          <div class="arch-step">
+            <div class="step-badge">Tahap 4</div>
+            <div class="step-icon"><i class="fa-solid fa-sliders"></i></div>
+            <h4>Kriteria & Pembobotan</h4>
+            <p>Job Description diuraikan menjadi kualifikasi berbobot prioritas (1-10) untuk panduan evaluasi.</p>
+            <div class="step-tech">Weighted Scoring Rules</div>
+          </div>
+
+          <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <!-- Flow Step 5 -->
+          <div class="arch-step highlight">
+            <div class="step-badge">Tahap 5</div>
+            <div class="step-icon"><i class="fa-solid fa-table-cells-large"></i></div>
+            <h4>Sintesis 3 Tabel Matriks</h4>
+            <p>Simultaneous Batch Evaluation menghasilkan Tabel Kualifikasi, Tanggung Jawab, dan Ranking Seleksi.</p>
+            <div class="step-tech">Multi-CV Batch Prompt</div>
+          </div>
+
+          <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <!-- Flow Step 6 -->
+          <div class="arch-step">
+            <div class="step-badge">Tahap 6</div>
+            <div class="step-icon"><i class="fa-solid fa-robot"></i></div>
+            <h4>Recruiter Q&A RAG Chat</h4>
+            <p>HR mengajukan pertanyaan spesifik dengan grounded knowledge dari matriks evaluasi.</p>
+            <div class="step-tech">Contextual Chatbot</div>
+          </div>
+        </div>
+
+        <!-- Technical Specification Matrix -->
+        <div class="tech-spec-grid">
+          <div class="spec-card">
+            <h4><i class="fa-brands fa-react"></i> Frontend Architecture</h4>
+            <ul>
+              <li><strong>Framework:</strong> React 19 + Vite (dikonversi ke Standalone Native Vanilla)</li>
+              <li><strong>Styling:</strong> Modern Tailwind Inspired CSS dengan variable token modular</li>
+              <li><strong>State Management:</strong> Real-time session switching & local state caching</li>
+              <li><strong>Interactivity:</strong> Dynamic weight recalculation, interactive chatbot, drag-drop</li>
+            </ul>
+          </div>
+
+          <div class="spec-card">
+            <h4><i class="fa-brands fa-python"></i> Backend Architecture</h4>
+            <ul>
+              <li><strong>Framework:</strong> Django 5 + Django REST Framework (DRF)</li>
+              <li><strong>Document Parser:</strong> PyMuPDF4LLM + fitz fallback untuk scan visual</li>
+              <li><strong>JSON Resilience:</strong> json-repair & safe regex parse untuk menjamin validitas output LLM</li>
+              <li><strong>File Storage:</strong> Partitioned session storage (`media/sessions/session_<id>/`)</li>
+            </ul>
+          </div>
+
+          <div class="spec-card">
+            <h4><i class="fa-solid fa-brain"></i> AI & Prompt Engineering</h4>
+            <ul>
+              <li><strong>Primary LLM:</strong> Qwen 3.8 Max via OpenRouter (1,000,000 tokens context)</li>
+              <li><strong>In-Memory Evaluation:</strong> Membandingkan seluruh kandidat dalam 1 single prompt besar</li>
+              <li><strong>Evaluation Rigor:</strong> Konsistensi simbol ✔️, ⚠️, ❌ terhadap final fit score</li>
+              <li><strong>Deterministic Temperature:</strong> Nilai 0.1 untuk mencegah halusinasi data profil</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: CANDIDATE DETAIL MODAL -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="candidateModal">
+    <div class="modal-dialog modal-large">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-avatar" id="modalCandAvatar">BP</div>
+          <div>
+            <h3 class="modal-cand-name" id="modalCandName">Bayu Pratama, S.Ars</h3>
+            <p class="modal-cand-sub" id="modalCandSub">S1 Arsitektur ITB • Jakarta Selatan</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeCandidateModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Contact & Score Bar -->
+        <div class="modal-info-strip">
+          <div class="strip-item">
+            <i class="fa-solid fa-envelope"></i>
+            <span id="modalCandEmail">bayu.pratama.arch@gmail.com</span>
+          </div>
+          <div class="strip-item">
+            <i class="fa-solid fa-phone"></i>
+            <span id="modalCandPhone">+62 812-3456-7890</span>
+          </div>
+          <div class="strip-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="modalCandDomisili">Jakarta Selatan</span>
+          </div>
+          <div class="strip-item highlight">
+            <span class="strip-score-label">Fit Score:</span>
+            <strong id="modalCandScore">94%</strong>
+            <span class="badge-mini" id="modalCandStatus">LOLOS (Rekomendasi Utama)</span>
+          </div>
+        </div>
+
+        <!-- Evaluation Summary Box -->
+        <div class="cand-eval-summary-card">
+          <h4><i class="fa-solid fa-star text-amber"></i> Catatan Evaluasi AI Recruiter</h4>
+          <p id="modalCandEvalText">
+            "Lulusan S1 Arsitektur ITB dengan 5.5 tahun pengalaman terbukti pada proyek high-rise dan residensial mewah. Sangat mahir BIM Autodesk Revit, Detail Engineering Design (DED), koordinasi MEP/Struktur, dan memiliki sertifikasi IAI."
+          </p>
+        </div>
+
+        <div class="modal-split-sections">
+          <!-- Left: Experience & Education Timeline -->
+          <div class="timeline-column">
+            <h4><i class="fa-solid fa-briefcase text-blue"></i> Riwayat Pengalaman Profesi</h4>
+            <div class="timeline-list" id="modalExpTimeline">
+              <!-- Injected by JavaScript -->
+            </div>
+
+            <h4 style="margin-top: 24px;"><i class="fa-solid fa-graduation-cap text-purple"></i> Pendidikan Formal</h4>
+            <div class="timeline-list" id="modalEduTimeline">
+              <!-- Injected by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Right: Skills & Raw Markdown CV View -->
+          <div class="skills-column">
+            <h4><i class="fa-solid fa-screwdriver-wrench text-green"></i> Hard Skills Terdeteksi</h4>
+            <div class="tags-cluster" id="modalHardSkills">
+              <!-- Injected by JS -->
+            </div>
+
+            <h4 style="margin-top: 18px;"><i class="fa-solid fa-users-gear text-amber"></i> Soft Skills</h4>
+            <div class="tags-cluster" id="modalSoftSkills">
+              <!-- Injected by JS -->
+            </div>
+
+            <!-- Parsed Markdown CV Tab -->
+            <h4 style="margin-top: 22px;"><i class="fa-solid fa-file-lines text-slate"></i> Pratinjau Markdown CV (PyMuPDF4LLM)</h4>
+            <div class="markdown-preview-box">
+              <pre><code id="modalMarkdownContent"># Memuat data CV markdown...</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="app.closeCandidateModal()">Tutup</button>
+        <button class="btn btn-primary" id="btnAskAboutCandidate">
+          <i class="fa-solid fa-comments"></i> Tanyakan Kandidat Ini ke Chatbot
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: JOB DESCRIPTION VIEWER -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="jobDescModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="card-title">
+          <i class="fa-solid fa-file-lines text-blue"></i>
+          <span id="jdModalTitle">Dokumen Lowongan Kerja: Senior Architect</span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeJobDescModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="jd-viewer-content" id="jdModalContent">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="app.closeJobDescModal()">Tutup Pratinjau</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: NEW SESSION CREATOR -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="newSessionModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="card-title">
+          <i class="fa-solid fa-plus-circle text-blue"></i>
+          <span>Buat Sesi Rekrutmen Baru</span>
+        </div>
+        <button class="modal-close-btn" onclick="app.closeNewSessionModal()">&times;</button>
+      </div>
+      <form id="newSessionForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="newSessionTitle">Judul Posisi Pekerjaan (Job Title) *</label>
+            <input type="text" id="newSessionTitle" class="form-control" placeholder="Contoh: Senior DevOps & Cloud Architect" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="newSessionDesc">Deskripsi Pekerjaan & Persyaratan Utama *</label>
+            <textarea id="newSessionDesc" rows="4" class="form-control" placeholder="Tuliskan gambaran kualifikasi, tanggung jawab, dan kriteria posisi ini..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="app.closeNewSessionModal()">Batal</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Buat & Buka Sesi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script src="app.js"></script>
+</body>
+</html>

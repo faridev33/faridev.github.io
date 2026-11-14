@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laporan Transaksi - Admin Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- SuperAdmin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        <h1 class="sidebar-title">Cafe Fari Admin</h1>
+        <small class="sidebar-subtitle">Hi, Super Administrator</small>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="admin-dashboard.html" class="menu-link">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-products.html" class="menu-link">
+            <span>☕</span>
+            <span>Produk (Menu)</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-tables.html" class="menu-link">
+            <span>🪑</span>
+            <span>Manajemen Meja</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-order-items.html" class="menu-link">
+            <span>📝</span>
+            <span>Detail Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-transactions.html" class="menu-link active">
+            <span>💰</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-users.html" class="menu-link">
+            <span>👥</span>
+            <span>Pengguna (Staff)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Riwayat & Laporan Transaksi</h1>
+          <p class="page-subtitle">Pantau seluruh omset, metode pembayaran, dan riwayat pesanan yang sudah lunas.</p>
+        </div>
+      </div>
+
+      <!-- Stats Grid (Omset) -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Transaksi</div>
+          <div class="stat-value" id="statTransCount">0</div>
+          <div class="stat-desc">Dalam periode filter aktif</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Total Pendapatan (Omset)</div>
+          <div class="stat-value" id="statRevenue">Rp 0</div>
+          <div class="stat-desc">Total omset bersih masuk</div>
+        </div>
+      </div>
+
+      <!-- Filter Controls (Exact from TransactionFilter.jsx) -->
+      <div class="admin-card" style="padding: 16px;">
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;">
+          <!-- Quick Date Filter Buttons -->
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn-secondary" id="btnFilterToday">Hari Ini</button>
+            <button type="button" class="btn-secondary" id="btnFilterWeek">Minggu Ini</button>
+            <button type="button" class="btn-secondary" id="btnFilterMonth">Bulan Ini</button>
+            <button type="button" class="btn-secondary" id="btnFilterReset" style="background:#e74c3c;">Reset Filter</button>
+          </div>
+
+          <!-- Sort & Search -->
+          <div style="display:flex; gap:10px; align-items:center;">
+            <label style="font-size:12px; font-weight:600;">Urutkan:</label>
+            <select id="sortOrderSelect" class="form-input" style="width:140px; padding:6px 10px; font-size:12px;">
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction Table (Exact from TransactionTable.jsx) -->
+      <div class="admin-card">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID Transaksi</th>
+                <th>Tanggal & Waktu</th>
+                <th>Meja</th>
+                <th>Nama Pelanggan</th>
+                <th>Metode Bayar</th>
+                <th>Total Tagihan</th>
+                <th>Kasir</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTbody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- TRANSACTION DETAIL MODAL (Exact from TransactionDetailModal.jsx) -->
+  <div class="modal-overlay" id="transDetailModal">
+    <div class="modal-box" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3 id="modalTransTitle">Detail Transaksi #101</h3>
+        <button class="btn-close-modal" id="btnCloseTransModal">&times;</button>
+      </div>
+
+      <p id="modalTransDate" style="font-size:12px; color:#666; margin:0 0 10px;"></p>
+      <hr style="border:0; border-top:1px solid #eee; margin:10px 0;"/>
+
+      <div style="background:#f9f8f6; padding:10px; border-radius:6px; margin-bottom:12px; font-size:13px;">
+        <div id="modalTransInfo">Meja 01 | Budi Santoso</div>
+        <div id="modalTransMethod">Metode: Tunai</div>
+      </div>
+
+      <div style="font-weight:bold; font-size:13px; margin-bottom:6px;">Rincian Item Menu:</div>
+      <div id="modalTransItemsList" style="margin-bottom:15px; font-size:13px;">
+        <!-- Injected items -->
+      </div>
+
+      <div style="border-top:2px solid var(--color-dark-coffee); padding-top:10px; display:flex; justify-content:space-between; font-weight:bold; font-size:16px;">
+        <span>TOTAL OMSET</span>
+        <span id="modalTransGrandTotal">Rp 0</span>
+      </div>
+
+      <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+        <button type="button" class="btn-secondary" id="btnCloseTransModal2">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let rawTransactions = [];
+    let currentFilter = 'all'; // 'all' | 'today' | 'week' | 'month'
+    let currentSort = 'newest';
+
+    function loadTransactions() {
+      rawTransactions = window.CafeStore.getTransactions();
+      applyFilters();
+    }
+
+    function applyFilters() {
+      let filtered = [...rawTransactions];
+      const now = new Date();
+
+      if (currentFilter === 'today') {
+        const todayStr = now.toISOString().split('T')[0];
+        filtered = filtered.filter(t => t.created_at.startsWith(todayStr));
+      } else if (currentFilter === 'week') {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        filtered = filtered.filter(t => new Date(t.created_at) >= weekAgo);
+      } else if (currentFilter === 'month') {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        filtered = filtered.filter(t => new Date(t.created_at) >= monthAgo);
+      }
+
+      // Sort
+      filtered.sort((a, b) => {
+        const da = new Date(a.created_at);
+        const db = new Date(b.created_at);
+        return currentSort === 'newest' ? db - da : da - db;
+      });
+
+      // Update stats
+      const totalRev = filtered.reduce((acc, t) => acc + (t.total_price || 0), 0);
+      document.getElementById('statTransCount').textContent = filtered.length;
+      document.getElementById('statRevenue').textContent = window.CafeStore.formatRupiah(totalRev);
+
+      // Render Table
+      const tbody = document.getElementById('transactionsTbody');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr><td colspan="8" style="text-align:center; padding:30px; color:#777;">Tidak ada transaksi pada filter ini.</td></tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#${t.id}</strong></td>
+          <td>${window.CafeStore.formatDateTime(t.created_at)}</td>
+          <td><span style="background:var(--color-dark-coffee); color:var(--color-warm-gold); padding:2px 8px; border-radius:10px; font-size:11px;">Meja ${t.table_id}</span></td>
+          <td><strong>${t.customer_name}</strong></td>
+          <td><span class="status-badge paid">${t.payment_method}</span></td>
+          <td><strong>${window.CafeStore.formatRupiah(t.total_price)}</strong></td>
+          <td><small>${t.cashier_name || 'Kasir'}</small></td>
+          <td>
+            <button class="btn-secondary" style="font-size:11px;" onclick="showTransDetail(${t.id})">
+              🔍 Detail
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showTransDetail(id) {
+      const t = rawTransactions.find(item => item.id === id);
+      if (!t) return;
+
+      document.getElementById('modalTransTitle').textContent = `Detail Transaksi #${t.id}`;
+      document.getElementById('modalTransDate').textContent = window.CafeStore.formatDateTime(t.created_at);
+      document.getElementById('modalTransInfo').textContent = `Meja: ${t.table_id} | Pelanggan: ${t.customer_name}`;
+      document.getElementById('modalTransMethod').textContent = `Metode Pembayaran: ${t.payment_method} (${t.cashier_name || 'Kasir'})`;
+
+      const itemsBox = document.getElementById('modalTransItemsList');
+      itemsBox.innerHTML = '';
+
+      (t.items || []).forEach(i => {
+        const r = document.createElement('div');
+        r.style.display = 'flex';
+        r.style.justifyContent = 'space-between';
+        r.style.padding = '6px 0';
+        r.style.borderBottom = '1px solid #eee';
+        r.innerHTML = `
+          <div>
+            <div>${i.name} <strong>x${i.quantity}</strong></div>
+            ${i.optionsText ? `<div style="font-size:11px; color:#777;">${i.optionsText}</div>` : ''}
+          </div>
+          <div>${window.CafeStore.formatRupiah(i.price * i.quantity)}</div>
+        `;
+        itemsBox.appendChild(r);
+      });
+
+      document.getElementById('modalTransGrandTotal').textContent = window.CafeStore.formatRupiah(t.total_price);
+      document.getElementById('transDetailModal').classList.add('active');
+    }
+
+    // Filter Button Clicks
+    document.getElementById('btnFilterToday').addEventListener('click', () => { currentFilter = 'today'; applyFilters(); });
+    document.getElementById('btnFilterWeek').addEventListener('click', () => { currentFilter = 'week'; applyFilters(); });
+    document.getElementById('btnFilterMonth').addEventListener('click', () => { currentFilter = 'month'; applyFilters(); });
+    document.getElementById('btnFilterReset').addEventListener('click', () => { currentFilter = 'all'; applyFilters(); });
+
+    document.getElementById('sortOrderSelect').addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('btnCloseTransModal').addEventListener('click', () => {
+      document.getElementById('transDetailModal').classList.remove('active');
+    });
+    document.getElementById('btnCloseTransModal2').addEventListener('click', () => {
+      document.getElementById('transDetailModal').classList.remove('active');
+    });
+
+    loadTransactions();
+  </script>
+</body>
+</html>

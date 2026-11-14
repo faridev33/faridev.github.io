@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrthoScan AI – Sistem Deteksi Fraktur Citra Rontgen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="brand-group">
+        <div class="logo-badge">🦴</div>
+        <div>
+          <div class="brand-title">OrthoScan AI</div>
+          <div class="brand-sub">Sistem Deteksi Fraktur Citra Rontgen (Ultralytics YOLOv8s)</div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="model-status-pill">
+          <span class="status-dot online"></span>
+          <span class="status-text">YOLOv8s Model Siap (Inference ~480ms)</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="container">
+    <!-- Model Target Classes Bar -->
+    <div class="class-bar">
+      <span class="class-bar-label">7 Target Deteksi Anatomi:</span>
+      <div class="class-bar-tags">
+        <span class="class-pill">Elbow positive</span>
+        <span class="class-pill">Fingers positive</span>
+        <span class="class-pill">Forearm fracture</span>
+        <span class="class-pill">Humerus fracture</span>
+        <span class="class-pill">Humerus</span>
+        <span class="class-pill">Shoulder</span>
+        <span class="class-pill">Wrist positive</span>
+      </div>
+    </div>
+
+    <!-- 2-Column Main Grid -->
+    <div class="main-grid">
+      <!-- Left Column: Upload & Input Control -->
+      <section class="card">
+        <div class="card-header">
+          <span class="step-badge">LANGKAH 1</span>
+          <h2 class="card-title">Unggah Citra Rontgen</h2>
+          <p class="card-subtitle">
+            Pilih foto radiografi (X-Ray) tulang ekstremitas atas/bawah untuk diproses deteksi lokasi fraktur oleh model.
+          </p>
+        </div>
+
+        <!-- Sample Presets for Quick Testing -->
+        <div class="preset-section">
+          <span class="preset-label">Atau coba sampel radiografi:</span>
+          <div class="preset-buttons">
+            <button class="preset-btn active" data-preset="forearm">
+              <span>🦴</span> Forearm Fracture
+            </button>
+            <button class="preset-btn" data-preset="wrist">
+              <span>✋</span> Wrist Fracture
+            </button>
+            <button class="preset-btn" data-preset="normal">
+              <span>✅</span> Normal Bone
+            </button>
+          </div>
+        </div>
+
+        <!-- Dropzone -->
+        <div class="dropzone" id="dropzone">
+          <div class="drop-prompt" id="dropPrompt">
+            <div class="upload-icon-wrap">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </div>
+            <div class="upload-primary">Klik atau Tarik Foto X-Ray ke Sini</div>
+            <div class="upload-secondary">Mendukung format JPG, PNG, WEBP (Maksimal 10 MB)</div>
+          </div>
+
+          <div class="preview-box hidden" id="previewBox">
+            <img src="" alt="Pratinjau Rontgen" id="previewImg" class="preview-img" />
+            <div class="preview-backdrop">
+              <span class="preview-change-btn">🔄 Klik untuk mengganti gambar</span>
+            </div>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="file-input-hidden" />
+        </div>
+
+        <!-- File Metadata Info -->
+        <div class="meta-box" id="metaBox">
+          <div class="meta-item">
+            <span class="meta-label">Berkas:</span>
+            <span class="meta-value" id="metaName">sample_forearm_xray.png</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Ukuran:</span>
+            <span class="meta-value" id="metaSize">328.5 KB</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Dimensi:</span>
+            <span class="meta-value" id="metaDim">800 × 800 px</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-row">
+          <button class="btn-primary" id="btnAnalyze">
+            <span class="btn-content">
+              <span>🔍</span> Mulai Deteksi Fraktur (YOLOv8s)
+            </span>
+          </button>
+          <button class="btn-ghost" id="btnReset">
+            Reset
+          </button>
+        </div>
+      </section>
+
+      <!-- Right Column: Visual Findings & Diagnostic Output -->
+      <section class="card">
+        <div class="card-header">
+          <span class="step-badge">LANGKAH 2</span>
+          <h2 class="card-title">Hasil Analisis & Lokalisasi</h2>
+          <p class="card-subtitle">
+            Visualisasi kotak pembatas (bounding box) deteksi lokasi fraktur dan rincian temuan klinis.
+          </p>
+        </div>
+
+        <!-- State: Empty -->
+        <div class="state-container hidden" id="stateEmpty">
+          <div class="empty-icon-circle">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <h3 class="state-title">Menunggu Citra Rontgen</h3>
+          <p class="state-desc">
+            Silakan unggah foto rontgen pada panel sebelah kiri lalu tekan tombol <strong>Mulai Deteksi Fraktur</strong>. Hasil deteksi YOLOv8 akan ditampilkan di sini.
+          </p>
+        </div>
+
+        <!-- State: Loading -->
+        <div class="state-container hidden" id="stateLoading">
+          <div class="radar-pulse">
+            <div class="radar-ring"></div>
+            <div class="radar-dot"></div>
+          </div>
+          <h3 class="state-title">Sedang Memproses Citra...</h3>
+          <p class="state-desc">
+            Model YOLOv8s sedang memindai pola diskontinuitas korteks tulang pada resolusi inferensi 800×800 px.
+          </p>
+        </div>
+
+        <!-- State: Results -->
+        <div class="results-wrapper" id="stateResults">
+          <!-- Status Banner -->
+          <div class="verdict-banner banner-fracture" id="verdictBanner">
+            <div class="banner-icon" id="bannerIcon">⚠️</div>
+            <div>
+              <div class="banner-heading" id="bannerHeading">TERDETEKSI PATAH TULANG (1 Lokasi)</div>
+              <div class="banner-subheading" id="bannerSubheading">
+                Model mendeteksi adanya fraktur pada os radius/ulna dengan tingkat keyakinan klinis 94.8%.
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Switcher -->
+          <div class="tab-bar">
+            <button class="tab-btn active" data-tab="annotated" id="tabAnnotated">
+              Citra Teranotasi (Bounding Box)
+            </button>
+            <button class="tab-btn" data-tab="original" id="tabOriginal">
+              Citra Asli (Polos)
+            </button>
+          </div>
+
+          <!-- Image Display Stage with Canvas Overlays -->
+          <div class="display-stage">
+            <div class="image-wrapper" id="imageWrapper">
+              <img src="preview.png" alt="X-Ray Analisis" id="resultImg" class="stage-img" />
+              <!-- Bounding Box Overlays -->
+              <div class="bbox-overlay" id="bboxOverlay">
+                <div class="bbox-box" id="sampleBBox" style="top: 40%; left: 36%; width: 28%; height: 22%;">
+                  <span class="bbox-label">Forearm fracture · 94.8%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Findings Breakdown List -->
+          <div class="findings-section">
+            <div class="findings-header">
+              <h4 class="findings-title">Rincian Lokasi & Tingkat Keyakinan:</h4>
+              <span class="inference-badge" id="inferenceBadge">⚡ Inferensi: 472ms</span>
+            </div>
+
+            <div class="findings-list" id="findingsList">
+              <div class="finding-card">
+                <div class="finding-main">
+                  <span class="finding-class">Forearm fracture</span>
+                  <span class="finding-badge badge-high">94.8% Akurasi</span>
+                </div>
+                <div class="finding-meta">
+                  <span>Anatomi: Tulang Lengan Bawah (Radius / Ulna)</span>
+                  <span class="meta-coords">BBox: [x:288, y:320, w:224, h:176]</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill" style="width: 94.8%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medical Disclaimer -->
+          <div class="disclaimer-card">
+            <div class="disclaimer-icon">ℹ️</div>
+            <p class="disclaimer-text">
+              <strong>Catatan Klinis:</strong> OrthoScan AI dirancang sebagai sistem pendukung keputusan (Computer-Aided Diagnosis / CAD). Hasil deteksi model wajib diverifikasi oleh dokter spesialis radiologi atau ortopedi sebelum tindakan medis dilakukan.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

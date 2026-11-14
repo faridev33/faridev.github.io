@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Pengguna (Staff) - Admin Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- SuperAdmin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        <h1 class="sidebar-title">Cafe Fari Admin</h1>
+        <small class="sidebar-subtitle">Hi, Super Administrator</small>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="admin-dashboard.html" class="menu-link">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-products.html" class="menu-link">
+            <span>☕</span>
+            <span>Produk (Menu)</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-tables.html" class="menu-link">
+            <span>🪑</span>
+            <span>Manajemen Meja</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-order-items.html" class="menu-link">
+            <span>📝</span>
+            <span>Detail Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-transactions.html" class="menu-link">
+            <span>💰</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-users.html" class="menu-link active">
+            <span>👥</span>
+            <span>Pengguna (Staff)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Manajemen Pengguna (Staff & Admin)</h1>
+          <p class="page-subtitle">Kelola akun staf kasir, koki dapur, pelayan, dan hak akses admin.</p>
+        </div>
+        <div>
+          <button class="btn-add" id="btnOpenAddUser">
+            ➕ Tambah Staff Baru
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Foto Profil</th>
+                <th>Username</th>
+                <th>Nama Lengkap</th>
+                <th>Peran (Role)</th>
+                <th>Tanggal Dibuat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD USER MODAL -->
+  <div class="modal-overlay" id="addUserModal">
+    <div class="modal-box" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3>Tambah Staff Baru</h3>
+        <button class="btn-close-modal" id="btnCloseUserModal">&times;</button>
+      </div>
+
+      <form id="userForm">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="newUsername" class="form-input" required placeholder="Cth: kasir2" />
+        </div>
+
+        <div class="form-group">
+          <label>Nama Lengkap</label>
+          <input type="text" id="newFullName" class="form-input" required placeholder="Cth: Siti Aminah" />
+        </div>
+
+        <div class="form-group">
+          <label>Peran (Role)</label>
+          <select id="newUserRole" class="form-input">
+            <option value="SuperAdmin">SuperAdmin (Semua Akses)</option>
+            <option value="Cashier">Cashier (Kasir POS)</option>
+            <option value="Kitchen">Kitchen (Koki Dapur)</option>
+            <option value="Waiter">Waiter (Pelayan Meja)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Password Akun</label>
+          <input type="password" id="newUserPassword" class="form-input" required placeholder="••••••••" />
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn-secondary" id="btnCancelUserModal">Batal</button>
+          <button type="submit" class="btn-add">Simpan Staf</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let users = [];
+
+    function renderUsers() {
+      users = window.CafeStore.getUsers();
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#${u.id}</strong></td>
+          <td>
+            ${u.avatar 
+              ? `<img src="${u.avatar}" class="table-avatar" alt="${u.username}" />`
+              : `<div class="no-avatar">${u.name ? u.name.charAt(0).toUpperCase() : 'U'}</div>`
+            }
+          </td>
+          <td><strong>${u.username}</strong></td>
+          <td>${u.name || u.username}</td>
+          <td>
+            <span class="role-badge ${u.role}">${u.role}</span>
+          </td>
+          <td>${u.created_at || '2025-01-10'}</td>
+          <td>
+            ${u.username !== 'admin' ? `
+              <button class="btn-delete" onclick="deleteStaff(${u.id}, '${u.username}')">Hapus</button>
+            ` : '<span style="font-size:11px; color:#888;">(Akun Utama)</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('btnOpenAddUser').addEventListener('click', () => {
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newFullName').value = '';
+      document.getElementById('newUserPassword').value = '';
+      document.getElementById('addUserModal').classList.add('active');
+    });
+
+    document.getElementById('userForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const un = document.getElementById('newUsername').value.trim();
+      const fn = document.getElementById('newFullName').value.trim();
+      const rl = document.getElementById('newUserRole').value;
+
+      window.CafeStore.saveUser({
+        username: un,
+        name: fn,
+        role: rl,
+        avatar: ''
+      });
+
+      document.getElementById('addUserModal').classList.remove('active');
+      renderUsers();
+    });
+
+    function deleteStaff(id, name) {
+      if (confirm(`Hapus staf ${name}?`)) {
+        window.CafeStore.deleteUser(id);
+        renderUsers();
+      }
+    }
+
+    document.getElementById('btnCloseUserModal').addEventListener('click', () => {
+      document.getElementById('addUserModal').classList.remove('active');
+    });
+    document.getElementById('btnCancelUserModal').addEventListener('click', () => {
+      document.getElementById('addUserModal').classList.remove('active');
+    });
+
+    renderUsers();
+  </script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic Market Desk – Autonomous IDX Multi-Agent Desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">📈</div>
+        <div>
+          <div class="brand-title">Agentic Market Desk</div>
+          <div class="brand-sub">Sistem Intelijen Pasar Saham IDX Otonom (8 Multi-Agent Engine)</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="toppicks">
+          <span>🎯</span> Top Picks
+        </button>
+        <button class="nav-tab" data-tab="screener">
+          <span>📊</span> Screener Saham
+        </button>
+        <button class="nav-tab" data-tab="agents">
+          <span>🤖</span> Deliberasi 8 Agen
+        </button>
+        <button class="nav-tab" data-tab="news">
+          <span>📰</span> Sentimen Berita
+        </button>
+        <button class="nav-tab" data-tab="portfolio">
+          <span>💼</span> Portofolio Realtime
+        </button>
+      </nav>
+
+      <div class="header-right">
+        <div class="market-pill">
+          <span class="live-indicator"></span>
+          <span>IDX BUKA · IHSG 7.245,60 (+0.42%)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Market Ticker Marquee -->
+  <div class="ticker-bar">
+    <div class="ticker-content">
+      <span class="ticker-item"><strong class="symbol">BBCA</strong> Rp 10.150 <span class="up">+1.25%</span></span>
+      <span class="ticker-item"><strong class="symbol">BBRI</strong> Rp 4.880 <span class="up">+0.83%</span></span>
+      <span class="ticker-item"><strong class="symbol">TLKM</strong> Rp 2.920 <span class="down">-0.68%</span></span>
+      <span class="ticker-item"><strong class="symbol">ASII</strong> Rp 5.050 <span class="up">+1.50%</span></span>
+      <span class="ticker-item"><strong class="symbol">BMRI</strong> Rp 6.700 <span class="up">+0.75%</span></span>
+      <span class="ticker-item"><strong class="symbol">BBNI</strong> Rp 5.250 <span class="down">-0.47%</span></span>
+      <span class="ticker-item"><strong class="symbol">UNTR</strong> Rp 26.800 <span class="up">+2.10%</span></span>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="main-container">
+
+    <!-- VIEW 1: TOP PICKS -->
+    <section class="tab-view active" id="view-toppicks">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Rekomendasi Teratas Konsensus Multi-Agen</h2>
+          <p class="view-desc">Hasil sintesis 8 agen AI otonom dari 30 emiten likuid IDX dengan risk-adjusted scoring.</p>
+        </div>
+        <div class="view-actions">
+          <button class="btn-primary" id="btnRefreshPicks">🔄 Refresh Analisis</button>
+        </div>
+      </div>
+
+      <!-- Top Picks Cards Grid -->
+      <div class="cards-grid">
+        <!-- Pick 1 -->
+        <div class="pick-card">
+          <div class="pick-card-top">
+            <div>
+              <span class="rank-badge">RANK #1</span>
+              <h3 class="stock-symbol">BBCA</h3>
+              <span class="stock-name">Bank Central Asia Tbk</span>
+            </div>
+            <div class="score-pill">
+              <span class="score-val">92/100</span>
+              <span class="score-label">Consensus Score</span>
+            </div>
+          </div>
+
+          <div class="price-row">
+            <div class="current-price">Rp 10.150</div>
+            <div class="price-change up">+1.25% Hari ini</div>
+          </div>
+
+          <div class="target-grid">
+            <div class="target-item">
+              <span class="target-label">Target Beli</span>
+              <span class="target-val">Rp 10.000 - 10.100</span>
+            </div>
+            <div class="target-item">
+              <span class="target-label">Target Profit</span>
+              <span class="target-val up">Rp 10.850 (+6.9%)</span>
+            </div>
+            <div class="target-item">
+              <span class="target-label">Stop Loss</span>
+              <span class="target-val down">Rp 9.750 (-3.9%)</span>
+            </div>
+          </div>
+
+          <div class="thesis-box">
+            <div class="thesis-header">Sintesis Agen:</div>
+            <p class="thesis-text">
+              Fundamental kuat (ROE 22.4%, NPL gross 1.8%). Technical break resistance 10.100 didukung volume akumulasi asing net buy Rp 210 Miliar.
+            </p>
+          </div>
+
+          <div class="agent-votes">
+            <span class="vote-tag buy">Fund: BUY</span>
+            <span class="vote-tag buy">Tech: BUY</span>
+            <span class="vote-tag buy">Macro: BULLISH</span>
+            <span class="vote-tag pass">Risk: PASS</span>
+          </div>
+        </div>
+
+        <!-- Pick 2 -->
+        <div class="pick-card">
+          <div class="pick-card-top">
+            <div>
+              <span class="rank-badge">RANK #2</span>
+              <h3 class="stock-symbol">ASII</h3>
+              <span class="stock-name">Astra International Tbk</span>
+            </div>
+            <div class="score-pill">
+              <span class="score-val">88/100</span>
+              <span class="score-label">Consensus Score</span>
+            </div>
+          </div>
+
+          <div class="price-row">
+            <div class="current-price">Rp 5.050</div>
+            <div class="price-change up">+1.50% Hari ini</div>
+          </div>
+
+          <div class="target-grid">
+            <div class="target-item">
+              <span class="target-label">Target Beli</span>
+              <span class="target-val">Rp 4.980 - 5.025</span>
+            </div>
+            <div class="target-item">
+              <span class="target-label">Target Profit</span>
+              <span class="target-val up">Rp 5.550 (+9.9%)</span>
+            </div>
+            <div class="target-item">
+              <span class="target-label">Stop Loss</span>
+              <span class="target-val down">Rp 4.820 (-4.5%)</span>
+            </div>
+          </div>
+
+          <div class="thesis-box">
+            <div class="thesis-header">Sintesis Agen:</div>
+            <p class="thesis-text">
+              Valuasi terdiskon (PBV 0.85x, PER 6.8x, Dividend Yield 8.2%). RSI 44 memantul dari oversold dengan sentimen pemulihan penjualan otomotif.
+            </p>
+          </div>
+
+          <div class="agent-votes">
+            <span class="vote-tag buy">Fund: BUY</span>
+            <span class="vote-tag buy">Tech: BUY</span>
+            <span class="vote-tag neutral">Macro: NEUTRAL</span>
+            <span class="vote-tag pass">Risk: PASS</span>
+          </div>
+        </div>
+
+        <!-- Pick 3 -->
+        <div class="pick-card">
+          <div class="pick-card-top">
+            <div>
+              <span class="rank-badge">RANK #3</span>
+              <h3 class="stock-symbol">UNTR</h3>
+              <span class="stock-name">United Tractors Tbk</span>
+            </div>
+            <div class="score-pill">
+              <span class="score-val">85/100</span>
+              <span class="score-label">Consensus Score</span>
+            </div>
+          </div>
+
+          <div class="price-row">
+            <div class="current-price">Rp 26.800</div>
+            <div class="price-change up">+2.10% Hari ini</div>
+          </div>
+
+          <div class="target-grid">
+            <div class="target-item">
+              <span class="target-label">Target Beli</span>
+              <span class="target-val">Rp 26.200 - 26.500</span>
+            </div>
+            <div class="target-item">
+              <span class="target-label">Target Profit</span>
+              <span class="target-val up">Rp 29.200 (+8.9%)</span>
+            </div>
+            <div class="target-item">
+              <span class="target-label">Stop Loss</span>
+              <span class="target-val down">Rp 25.400 (-5.2%)</span>
+            </div>
+          </div>
+
+          <div class="thesis-box">
+            <div class="thesis-header">Sintesis Agen:</div>
+            <p class="thesis-text">
+              Kas bersih tebal dan katalis ekspansi tambang emas Martabe mengimbangi normalisasi batubara. FCF yield tinggi 11.2%.
+            </p>
+          </div>
+
+          <div class="agent-votes">
+            <span class="vote-tag buy">Fund: STRONG BUY</span>
+            <span class="vote-tag hold">Tech: HOLD</span>
+            <span class="vote-tag buy">Macro: BULLISH</span>
+            <span class="vote-tag pass">Risk: PASS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: SCREENER -->
+    <section class="tab-view" id="view-screener">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Screener Kuantitatif 30 Saham IDX</h2>
+          <p class="view-desc">Filter fundamental, teknikal, dan risiko komparatif secara deterministik.</p>
+        </div>
+        <div class="screener-filters">
+          <input type="text" class="search-input" placeholder="Cari kode saham (e.g. BBCA, TLKM)..." id="screenerSearch" />
+          <select class="filter-select" id="sectorFilter">
+            <option value="all">Semua Sektor</option>
+            <option value="Banking">Perbankan (Finance)</option>
+            <option value="Telco">Telekomunikasi</option>
+            <option value="Consumer">Consumer Goods</option>
+            <option value="Energy">Energi & Tambang</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Nama Emiten</th>
+              <th>Sektor</th>
+              <th>Harga (Rp)</th>
+              <th>PER</th>
+              <th>PBV</th>
+              <th>ROE</th>
+              <th>RSI (14)</th>
+              <th>Skor Agen</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="screenerTbody">
+            <tr>
+              <td><strong>BBCA</strong></td>
+              <td>Bank Central Asia Tbk</td>
+              <td>Banking</td>
+              <td>Rp 10.150</td>
+              <td>23.5x</td>
+              <td>4.6x</td>
+              <td>22.4%</td>
+              <td>58.2</td>
+              <td><span class="score-tag green">92</span></td>
+              <td><button class="tbl-btn">Analisa</button></td>
+            </tr>
+            <tr>
+              <td><strong>BBRI</strong></td>
+              <td>Bank Rakyat Indonesia Tbk</td>
+              <td>Banking</td>
+              <td>Rp 4.880</td>
+              <td>11.8x</td>
+              <td>2.1x</td>
+              <td>18.5%</td>
+              <td>46.7</td>
+              <td><span class="score-tag green">84</span></td>
+              <td><button class="tbl-btn">Analisa</button></td>
+            </tr>
+            <tr>
+              <td><strong>ASII</strong></td>
+              <td>Astra International Tbk</td>
+              <td>Consumer</td>
+              <td>Rp 5.050</td>
+              <td>6.8x</td>
+              <td>0.85x</td>
+              <td>13.8%</td>
+              <td>44.1</td>
+              <td><span class="score-tag green">88</span></td>
+              <td><button class="tbl-btn">Analisa</button></td>
+            </tr>
+            <tr>
+              <td><strong>TLKM</strong></td>
+              <td>Telkom Indonesia Tbk</td>
+              <td>Telco</td>
+              <td>Rp 2.920</td>
+              <td>13.2x</td>
+              <td>2.2x</td>
+              <td>16.1%</td>
+              <td>38.9</td>
+              <td><span class="score-tag yellow">76</span></td>
+              <td><button class="tbl-btn">Analisa</button></td>
+            </tr>
+            <tr>
+              <td><strong>UNTR</strong></td>
+              <td>United Tractors Tbk</td>
+              <td>Energy</td>
+              <td>Rp 26.800</td>
+              <td>5.2x</td>
+              <td>1.1x</td>
+              <td>21.5%</td>
+              <td>62.4</td>
+              <td><span class="score-tag green">85</span></td>
+              <td><button class="tbl-btn">Analisa</button></td>
+            </tr>
+            <tr>
+              <td><strong>BMRI</strong></td>
+              <td>Bank Mandiri Tbk</td>
+              <td>Banking</td>
+              <td>Rp 6.700</td>
+              <td>10.4x</td>
+              <td>1.9x</td>
+              <td>19.8%</td>
+              <td>54.3</td>
+              <td><span class="score-tag green">86</span></td>
+              <td><button class="tbl-btn">Analisa</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW 3: 8 AGENTS DELIBERATION -->
+    <section class="tab-view" id="view-agents">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Arsitektur Orkestrasi 8 Agen Otonom</h2>
+          <p class="view-desc">Setiap keputusan investasi merupakan hasil dialektika antar-agen dengan fungsi objektif berbeda.</p>
+        </div>
+      </div>
+
+      <div class="agents-grid">
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">📥</span>
+            <div>
+              <h4 class="agent-box-title">1. Data Ingestion Agent</h4>
+              <span class="agent-role">Koleksi Pasar Realtime</span>
+            </div>
+          </div>
+          <p class="agent-desc">Menarik data harga Yahoo Finance, orderbook, laporan keuangan emiten, dan indeks makro BI/Fed.</p>
+          <div class="agent-metric">Latency: 120ms · 30 Emiten Aktif</div>
+        </div>
+
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">📊</span>
+            <div>
+              <h4 class="agent-box-title">2. Technical Agent</h4>
+              <span class="agent-role">Analisis Tren & Indikator</span>
+            </div>
+          </div>
+          <p class="agent-desc">Kalkulasi RSI, MACD, Bollinger Bands, Moving Average crossover, dan zona Support/Resistance.</p>
+          <div class="agent-metric">Signal Accuracy: 74.2%</div>
+        </div>
+
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">💼</span>
+            <div>
+              <h4 class="agent-box-title">3. Fundamental Agent</h4>
+              <span class="agent-role">Valuasi & Laporan Keuangan</span>
+            </div>
+          </div>
+          <p class="agent-desc">Evaluasi PER, PBV, ROE, FCF yield, pertumbuhan laba bersih kuartalan, dan rasio solvabilitas.</p>
+          <div class="agent-metric">Fair Value Margin: 15% Safety</div>
+        </div>
+
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">🌐</span>
+            <div>
+              <h4 class="agent-box-title">4. Macro Agent</h4>
+              <span class="agent-role">Siklus & Kebijakan Makro</span>
+            </div>
+          </div>
+          <p class="agent-desc">Menganalisis suku bunga BI-Rate, inflasi, nilai tukar USD/IDR, serta harga komoditas global.</p>
+          <div class="agent-metric">Regime: Neutral to Expansionary</div>
+        </div>
+
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">📰</span>
+            <div>
+              <h4 class="agent-box-title">5. Sentiment Agent</h4>
+              <span class="agent-role">NLP Sentimen Berita</span>
+            </div>
+          </div>
+          <p class="agent-desc">Membaca feed CNBC, Kontan, Bisnis Indonesia, dan mengukur polaritas sentimen pasar.</p>
+          <div class="agent-metric">Polarity Index: +0.62 (Bullish)</div>
+        </div>
+
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">🧠</span>
+            <div>
+              <h4 class="agent-box-title">6. Synthesizer Agent</h4>
+              <span class="agent-role">Konsensus & Pembobotan</span>
+            </div>
+          </div>
+          <p class="agent-desc">Menggabungkan seluruh skor independen menggunakan model komparasi multi-kriteria deterministik.</p>
+          <div class="agent-metric">Consensus Weight: Dynamic Volatility</div>
+        </div>
+
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">🛡️</span>
+            <div>
+              <h4 class="agent-box-title">7. Risk Manager Agent</h4>
+              <span class="agent-role">Manajemen Posisi & VaR</span>
+            </div>
+          </div>
+          <p class="agent-desc">Menetapkan batas alokasi modal (max 20% per emiten), trailing stop-loss, dan estimasi Max Drawdown.</p>
+          <div class="agent-metric">Max Risk / Trade: 2.0% Modal</div>
+        </div>
+
+        <div class="agent-box">
+          <div class="agent-head">
+            <span class="agent-avatar-icon">⚖️</span>
+            <div>
+              <h4 class="agent-box-title">8. Critic Agent</h4>
+              <span class="agent-role">Audit & Anti-Halusinasi</span>
+            </div>
+          </div>
+          <p class="agent-desc">Menantang tesis bullish, menguji skenario penurunan (downside risk), dan memverifikasi data harga.</p>
+          <div class="agent-metric">Audit Rejection Rate: 8.5%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: NEWS SENTIMENT -->
+    <section class="tab-view" id="view-news">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Sentimen Berita Pasar Modal Terkini</h2>
+          <p class="view-desc">Ekstraksi NLP dari portal berita keuangan nasional dengan analisis dampak harga.</p>
+        </div>
+      </div>
+
+      <div class="news-list">
+        <div class="news-card">
+          <div class="news-top">
+            <span class="news-source">CNBC Indonesia · 25 menit lalu</span>
+            <span class="sentiment-badge positive">SENTIMEN POSITIF (+0.82)</span>
+          </div>
+          <h3 class="news-title">Bank Mandiri (BMRI) Catat Rekor Laba Bersih Tumbuh 15.6% YoY Ditopang Kredit Korporasi</h3>
+          <p class="news-summary">
+            Penyaluran kredit tembus target RBB dengan NPL tetap terjaga di 1.2%. Agen Fundamental menaikkan target harga BMRI menjadi Rp 7.300.
+          </p>
+          <div class="news-tags">
+            <span class="tag">#BMRI</span>
+            <span class="tag">#Perbankan</span>
+            <span class="tag">#LaporanKeuangan</span>
+          </div>
+        </div>
+
+        <div class="news-card">
+          <div class="news-top">
+            <span class="news-source">Kontan · 1 jam lalu</span>
+            <span class="sentiment-badge positive">SENTIMEN POSITIF (+0.75)</span>
+          </div>
+          <h3 class="news-title">Astra International (ASII) Siapkan Dividen Interim Jumbo, Yield Diprediksi Tembus 7.8%</h3>
+          <p class="news-summary">
+            Manajemen mengonfirmasi arus kas operasional kuat meski persaingan mobil listrik kian ketat. Likuiditas kas melimpah mendukung imbal hasil dividen.
+          </p>
+          <div class="news-tags">
+            <span class="tag">#ASII</span>
+            <span class="tag">#Dividen</span>
+            <span class="tag">#Otomotif</span>
+          </div>
+        </div>
+
+        <div class="news-card">
+          <div class="news-top">
+            <span class="news-source">Bisnis Indonesia · 2 jam lalu</span>
+            <span class="sentiment-badge neutral">SENTIMEN NETRAL (+0.05)</span>
+          </div>
+          <h3 class="news-title">Telkom (TLKM) Genjot Konsolidasi Data Center NeutraDC Jelang Penawaran Mitra Strategis</h3>
+          <p class="news-summary">
+            Sentimen jangka menengah dinilai positif namun margin ARPU seluler masih tertekan perang tarif data.
+          </p>
+          <div class="news-tags">
+            <span class="tag">#TLKM</span>
+            <span class="tag">#DataCenter</span>
+            <span class="tag">#Telekomunikasi</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: PORTFOLIO -->
+    <section class="tab-view" id="view-portfolio">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Pelacak Portofolio Virtual Otonom</h2>
+          <p class="view-desc">Simulasi eksekusi otomatis strategi multi-agen pada modal awal Rp 100.000.000.</p>
+        </div>
+      </div>
+
+      <div class="portfolio-metrics">
+        <div class="port-card">
+          <div class="port-label">Nilai Total Portofolio</div>
+          <div class="port-val">Rp 114.850.000</div>
+          <div class="port-sub up">+14.85% (Return Kumulatif)</div>
+        </div>
+        <div class="port-card">
+          <div class="port-label">Sisa Kas Siap Pakai</div>
+          <div class="port-val">Rp 32.450.000</div>
+          <div class="port-sub">28.2% Alokasi Tunai</div>
+        </div>
+        <div class="port-card">
+          <div class="port-label">Win Rate Strategi</div>
+          <div class="port-val">76.4%</div>
+          <div class="port-sub">Sharpe Ratio: 1.82 · Max DD: -5.4%</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

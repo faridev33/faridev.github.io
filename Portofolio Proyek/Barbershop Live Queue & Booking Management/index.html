@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barbershop Live Queue & Booking – Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    (function(){const t=localStorage.getItem("portfolio-theme")||"dark";document.documentElement.setAttribute("data-theme",t)})();
+  </script>
+</head>
+<body>
+
+  <!-- ============================================ -->
+  <!-- LOGIN / LANDING PAGE                         -->
+  <!-- ============================================ -->
+  <div class="login-page">
+    <div class="login-scene">
+      <!-- Floating particles background -->
+      <div class="login-particles">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <div class="login-card">
+        <!-- Logo -->
+        <div class="login-logo">
+          <div class="login-logo-icon"><i class="fa-solid fa-scissors"></i></div>
+          <h1>BARBERSHOP PREMIER</h1>
+          <p class="login-tagline">Live Queue & Booking Management System</p>
+          <div class="login-tech-badges">
+            <span class="badge-tech">Node.js</span>
+            <span class="badge-tech">React</span>
+            <span class="badge-tech">PostgreSQL</span>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="login-divider">
+          <span>Pilih Role untuk Demo</span>
+        </div>
+
+        <!-- Role Cards -->
+        <div class="login-roles-grid">
+          <!-- Customer Role -->
+          <a href="customer.html" class="login-role-card customer-card">
+            <div class="role-card-icon customer-icon">
+              <i class="fa-solid fa-mobile-screen"></i>
+            </div>
+            <div class="role-card-body">
+              <h3>Pelanggan</h3>
+              <p>Booking layanan, pilih kapster, bayar QRIS, dan dapatkan tiket antrean digital.</p>
+              <ul class="role-features">
+                <li><i class="fa-solid fa-check"></i> Reservasi mandiri via smartphone</li>
+                <li><i class="fa-solid fa-check"></i> Pantau posisi antrean real-time</li>
+                <li><i class="fa-solid fa-check"></i> Pembayaran QRIS otomatis</li>
+                <li><i class="fa-solid fa-check"></i> Tiket digital & notifikasi WA</li>
+              </ul>
+            </div>
+            <div class="role-card-action">
+              <span>Buka Halaman Booking</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </div>
+          </a>
+
+          <!-- Admin Role -->
+          <a href="admin.html" class="login-role-card admin-card">
+            <div class="role-card-icon admin-icon">
+              <i class="fa-solid fa-gauge-high"></i>
+            </div>
+            <div class="role-card-body">
+              <h3>Kasir / Admin</h3>
+              <p>Kelola antrean, pantau pendapatan bagi hasil kapster, dan atur tarif layanan.</p>
+              <ul class="role-features">
+                <li><i class="fa-solid fa-check"></i> Live queue console & panggilan</li>
+                <li><i class="fa-solid fa-check"></i> Analitik pendapatan & komisi</li>
+                <li><i class="fa-solid fa-check"></i> CRUD katalog layanan & tarif</li>
+                <li><i class="fa-solid fa-check"></i> Layar TV antrean & cetak QR</li>
+              </ul>
+            </div>
+            <div class="role-card-action">
+              <span>Buka Dashboard Admin</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </div>
+          </a>
+        </div>
+
+        <!-- System Info -->
+        <div class="login-system-info">
+          <div class="info-row">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Demo interaktif — semua data bersifat simulasi dan tidak terhubung ke database.</span>
+          </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button class="login-theme-toggle" id="loginThemeBtn" type="button" aria-label="Toggle tema">
+          <i class="fa-solid fa-moon" id="loginThemeIcon"></i>
+        </button>
+      </div>
+
+      <!-- Architecture Preview -->
+      <div class="login-arch-preview">
+        <h4><i class="fa-solid fa-network-wired"></i> Arsitektur Sistem</h4>
+        <div class="arch-mini-flow">
+          <div class="arch-mini-node">
+            <i class="fa-solid fa-mobile-screen"></i>
+            <span>Customer App</span>
+          </div>
+          <div class="arch-mini-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="arch-mini-node">
+            <i class="fa-solid fa-qrcode"></i>
+            <span>QRIS Pay</span>
+          </div>
+          <div class="arch-mini-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="arch-mini-node highlight">
+            <i class="fa-solid fa-server"></i>
+            <span>REST API</span>
+          </div>
+          <div class="arch-mini-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="arch-mini-node">
+            <i class="fa-solid fa-database"></i>
+            <span>PostgreSQL</span>
+          </div>
+          <div class="arch-mini-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          <div class="arch-mini-node">
+            <i class="fa-solid fa-tv"></i>
+            <span>Dashboard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle on login page
+    const loginThemeBtn = document.getElementById('loginThemeBtn');
+    const loginThemeIcon = document.getElementById('loginThemeIcon');
+    function applyLoginTheme(){
+      const t = document.documentElement.getAttribute('data-theme')||'dark';
+      loginThemeIcon.className = t==='dark'?'fa-solid fa-moon':'fa-solid fa-sun';
+    }
+    applyLoginTheme();
+    loginThemeBtn.addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme')||'dark';
+      const next = cur==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('portfolio-theme', next);
+      applyLoginTheme();
+    });
+  </script>
+</body>
+</html>

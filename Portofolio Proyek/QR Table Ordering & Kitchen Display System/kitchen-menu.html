@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Stok Menu (86) - Dapur Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- Kitchen Sidebar -->
+    <aside class="sidebar kitchen-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">KITCHEN</h2>
+        <span class="sidebar-subtitle">Display System (KDS)</span>
+        <div style="margin-top: 10px; font-size: 13px; color: #fff; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">
+          👨‍🍳 Chef Junaedi
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="kitchen-dashboard.html" class="menu-link">
+            <span>🍳</span>
+            <span>Antrian Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="kitchen-history.html" class="menu-link">
+            <span>📜</span>
+            <span>Riwayat Masak</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="kitchen-menu.html" class="menu-link active">
+            <span>📦</span>
+            <span>Stok Menu (86)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar Shift</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Manajemen Stok & Ketersediaan Menu</h1>
+          <p class="page-subtitle">Matikan menu yang bahan bakunya habis agar pelanggan di meja tidak bisa memesannya.</p>
+        </div>
+      </div>
+
+      <!-- Stock Grid -->
+      <div class="stock-grid" id="stockMenuGrid">
+        <!-- Injected by JavaScript -->
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function renderStock() {
+      const products = window.CafeStore.getProducts();
+      const grid = document.getElementById('stockMenuGrid');
+      grid.innerHTML = '';
+
+      products.forEach(p => {
+        const isAvailable = (p.status === 'Available');
+        const card = document.createElement('div');
+        card.className = `stock-card ${!isAvailable ? 'unavailable' : ''}`;
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:center;">
+            <img src="${p.image}" alt="${p.name}" class="stock-img" />
+          </div>
+          <div class="stock-name">${p.name}</div>
+          <div style="font-size:12px; color:#666; margin-bottom:6px;">${p.category} - ${window.CafeStore.formatRupiah(p.price)}</div>
+          
+          <div class="stock-status ${isAvailable ? 'status-ok' : 'status-no'}">
+            ${isAvailable ? '● TERSEDIA' : '✕ HABIS (86)'}
+          </div>
+
+          <button 
+            type="button" 
+            class="btn-toggle ${isAvailable ? 'btn-off' : 'btn-on'}" 
+            onclick="toggleStock(${p.id}, '${p.name}', '${p.status}')"
+          >
+            ${isAvailable ? 'Matikan (Habis)' : 'Aktifkan (Tersedia)'}
+          </button>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleStock(id, name, currentStatus) {
+      const actionName = (currentStatus === 'Available') ? 'HABIS' : 'TERSEDIA';
+      if (confirm(`Ubah status menu "${name}" menjadi ${actionName}?`)) {
+        window.CafeStore.toggleProductStatus(id);
+        renderStock();
+      }
+    }
+
+    renderStock();
+  </script>
+</body>
+</html>

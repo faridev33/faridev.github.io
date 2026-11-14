@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Pelayan (Waiter) - Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- Waiter Sidebar -->
+    <aside class="sidebar waiter-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">CAFE FARI</h2>
+        <span class="sidebar-subtitle">Waiter Service Panel</span>
+        <div style="margin-top: 10px; font-size: 13px; color: #fff; background: rgba(0,0,0,0.25); padding: 4px 8px; border-radius: 4px;">
+          🧑‍🍳 Shift: Bayu Pelayan
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="waiter.html" class="menu-link active">
+            <span>🛎️</span>
+            <span>Antaran & Meja</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar Shift</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Panel Pelayanan & Pengantaran (Waiter)</h1>
+          <p class="page-subtitle">Pantau pesanan yang baru selesai dimasak di dapur dan antar ke meja pelanggan.</p>
+        </div>
+        <button class="btn-add" id="btnRefreshWaiter" style="background:#2d3436;">
+          🔄 Refresh
+        </button>
+      </div>
+
+      <!-- Section: Ready to serve orders from Kitchen -->
+      <div class="admin-card">
+        <div class="admin-header-action" style="margin-bottom: 1rem;">
+          <h2 style="font-size: 16px; margin: 0; font-weight: 700; color: #d35400;">
+            🔥 Hidangan Selesai Dimasak (Siap Diantar)
+          </h2>
+          <span id="readyCountBadge" style="background:var(--color-green-success); color:white; font-size:11px; font-weight:bold; padding:4px 10px; border-radius:12px;">
+            0 Siap Saji
+          </span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. Order</th>
+                <th>Tujuan Meja</th>
+                <th>Nama Pelanggan</th>
+                <th>Menu yang Siap Disajikan</th>
+                <th>Status Pembayaran</th>
+                <th>Aksi Pelayan</th>
+              </tr>
+            </thead>
+            <tbody id="readyOrdersTbody">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section: Table Status Grid -->
+      <div class="admin-card">
+        <h2 style="font-size: 16px; margin: 0 0 1rem 0; font-weight: 700;">
+          Status Okupansi Seluruh Meja
+        </h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;" id="waiterTablesGrid">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    function renderWaiterPanel() {
+      const orders = window.CafeStore.getOrders();
+      const tables = window.CafeStore.getTables();
+
+      // Filter: orders done cooking but not served yet
+      const readyOrders = orders.filter(o => o.cooking_status === 'DONE' && o.waiter_status !== 'SERVED');
+      document.getElementById('readyCountBadge').textContent = `${readyOrders.length} Siap Saji`;
+
+      const tbody = document.getElementById('readyOrdersTbody');
+      tbody.innerHTML = '';
+
+      if (readyOrders.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; padding:30px; color:#777;">
+              Semua hidangan dari dapur sudah berhasil diantarkan ke meja tamu!
+            </td>
+          </tr>
+        `;
+      } else {
+        readyOrders.forEach(o => {
+          const tr = document.createElement('tr');
+          const isPaid = (o.payment_status === 'PAID');
+          const itemsText = o.items.map(i => `${i.quantity}x ${i.name}`).join(', ');
+
+          tr.innerHTML = `
+            <td><strong>#${o.id}</strong></td>
+            <td><span style="background:var(--color-dark-coffee); color:var(--color-warm-gold); padding:4px 12px; border-radius:15px; font-weight:700; font-size:12px;">Meja ${o.table_id}</span></td>
+            <td><strong>${o.customer_name}</strong></td>
+            <td>${itemsText}</td>
+            <td><span class="status-badge ${isPaid ? 'paid' : 'unpaid'}">${o.payment_status}</span></td>
+            <td>
+              <button class="btn-add" style="background:var(--color-green-success); font-size:12px; padding:6px 12px;" onclick="deliverOrder(${o.id}, ${o.table_id})">
+                🚀 Antar ke Meja
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Tables overview
+      const tgrid = document.getElementById('waiterTablesGrid');
+      tgrid.innerHTML = '';
+
+      tables.forEach(t => {
+        const isOccupied = (t.status === 'Occupied');
+        const card = document.createElement('div');
+        card.style.background = isOccupied ? '#fdeeed' : '#e8f8f0';
+        card.style.border = `1px solid ${isOccupied ? '#f5c6cb' : '#c3e6cb'}`;
+        card.style.borderRadius = '8px';
+        card.style.padding = '12px 8px';
+        card.style.textAlign = 'center';
+
+        card.innerHTML = `
+          <div style="font-weight:700; font-size:14px; color:${isOccupied ? '#721c24' : '#155724'};">Meja ${t.number}</div>
+          <div style="font-size:11px; color:#666; margin:4px 0;">${t.capacity} Orang</div>
+          <div style="font-size:10px; font-weight:bold; color:${isOccupied ? '#e74c3c' : '#27ae60'};">
+            ${isOccupied ? 'TERISI' : 'KOSONG'}
+          </div>
+        `;
+        tgrid.appendChild(card);
+      });
+    }
+
+    function deliverOrder(orderId, tableNum) {
+      if (confirm(`Konfirmasi antaran pesanan #${orderId} telah sampai di Meja ${tableNum}?`)) {
+        window.CafeStore.updateOrderStatus(orderId, { waiter_status: 'SERVED' });
+        renderWaiterPanel();
+      }
+    }
+
+    document.getElementById('btnRefreshWaiter').addEventListener('click', () => {
+      renderWaiterPanel();
+    });
+
+    window.addEventListener('cafefari:update', renderWaiterPanel);
+    renderWaiterPanel();
+  </script>
+</body>
+</html>

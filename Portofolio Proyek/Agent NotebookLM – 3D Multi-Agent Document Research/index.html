@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent NotebookLM – 3D Multi-Agent Document Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top Navigation Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">🧠</div>
+        <div>
+          <div class="brand-title">Agent NotebookLM</div>
+          <div class="brand-subtitle">3D Autonomous Multi-Agent Document Research Platform</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-view="dashboard">
+          <span>🏢</span> Ruang Agen 3D
+        </button>
+        <button class="nav-tab" data-view="documents">
+          <span>📁</span> Dokumen & OCR
+        </button>
+        <button class="nav-tab" data-view="pipeline">
+          <span>⚡</span> Pipeline Agen
+        </button>
+        <button class="nav-tab" data-view="results">
+          <span>📝</span> Hasil Riset
+        </button>
+        <button class="nav-tab" data-view="tokens">
+          <span>📊</span> Metrik Token
+        </button>
+      </nav>
+
+      <div class="header-right">
+        <div class="session-badge">
+          <span class="pulse-dot"></span>
+          <span>Sesi: Analisis Paper Hybrid CNN 2026</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- VIEW 1: 3D MULTI-AGENT STAGE -->
+    <section class="view-section active" id="view-dashboard">
+      <div class="dashboard-grid">
+        <!-- Left: 3D Stage Simulation -->
+        <div class="stage-container">
+          <div class="stage-header">
+            <div class="stage-title-wrap">
+              <span class="stage-status-tag">REALTIME 3D WORKSPACE</span>
+              <h2 class="stage-title">Ruang Kerja Multi-Agen Otonom</h2>
+            </div>
+            <div class="stage-controls">
+              <button class="ctrl-btn" id="btnRunPipeline">
+                <span>▶️</span> Jalankan Riset Otonom
+              </button>
+            </div>
+          </div>
+
+          <!-- 3D Canvas / Isometric Virtual Stage -->
+          <div class="stage-canvas-wrapper">
+            <div class="office-floor">
+              <!-- Agent Pod 1: Parser -->
+              <div class="agent-pod active" id="podParser" style="top: 25%; left: 18%;">
+                <div class="pod-halo"></div>
+                <div class="agent-avatar">📄</div>
+                <div class="agent-pod-info">
+                  <div class="agent-name">Agent Parser</div>
+                  <div class="agent-activity" id="actParser">Membaca PDF (28 Halaman)</div>
+                </div>
+                <div class="agent-bubble" id="bubbleParser">Ekstraksi bab metodologi & tabel hasil...</div>
+              </div>
+
+              <!-- Agent Pod 2: Researcher -->
+              <div class="agent-pod active" id="podResearcher" style="top: 25%; right: 18%;">
+                <div class="pod-halo"></div>
+                <div class="agent-avatar">🔬</div>
+                <div class="agent-pod-info">
+                  <div class="agent-name">Agent Peneliti</div>
+                  <div class="agent-activity" id="actResearcher">RAG Retrieval</div>
+                </div>
+                <div class="agent-bubble" id="bubbleResearcher">Menghubungkan 14 temuan klinis...</div>
+              </div>
+
+              <!-- Center Knowledge Core -->
+              <div class="stage-core">
+                <div class="core-ring"></div>
+                <div class="core-icon">💎</div>
+                <div class="core-label">Vector Knowledge Base</div>
+              </div>
+
+              <!-- Agent Pod 3: Fact Auditor -->
+              <div class="agent-pod active" id="podAuditor" style="bottom: 22%; left: 20%;">
+                <div class="pod-halo"></div>
+                <div class="agent-avatar">⚖️</div>
+                <div class="agent-pod-info">
+                  <div class="agent-name">Agent Analis</div>
+                  <div class="agent-activity" id="actAuditor">Audit Fakta 100%</div>
+                </div>
+                <div class="agent-bubble" id="bubbleAuditor">Memverifikasi metrik akurasi 92.32%...</div>
+              </div>
+
+              <!-- Agent Pod 4: Writer -->
+              <div class="agent-pod active" id="podWriter" style="bottom: 22%; right: 20%;">
+                <div class="pod-halo"></div>
+                <div class="agent-avatar">✍️</div>
+                <div class="agent-pod-info">
+                  <div class="agent-name">Agent Penulis</div>
+                  <div class="agent-activity" id="actWriter">Sintesis Markdown</div>
+                </div>
+                <div class="agent-bubble" id="bubbleWriter">Menyusun ringkasan eksekutif...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Agent Status Indicators -->
+          <div class="agent-cards-row">
+            <div class="agent-mini-card">
+              <div class="mini-icon">📄</div>
+              <div>
+                <div class="mini-name">Agent Parser</div>
+                <div class="mini-status online">Aktif · OCR Ekstraksi</div>
+              </div>
+            </div>
+            <div class="agent-mini-card">
+              <div class="mini-icon">🔬</div>
+              <div>
+                <div class="mini-name">Agent Peneliti</div>
+                <div class="mini-status online">Aktif · Semantic Search</div>
+              </div>
+            </div>
+            <div class="agent-mini-card">
+              <div class="mini-icon">⚖️</div>
+              <div>
+                <div class="mini-name">Agent Analis</div>
+                <div class="mini-status online">Aktif · Fact Audit</div>
+              </div>
+            </div>
+            <div class="agent-mini-card">
+              <div class="mini-icon">✍️</div>
+              <div>
+                <div class="mini-name">Agent Penulis</div>
+                <div class="mini-status online">Aktif · Markdown Synth</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Live Activity Stream & Synthesis Summary -->
+        <div class="side-panel">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">⚡ Live Thought Stream</h3>
+              <span class="live-tag">SSE LIVE</span>
+            </div>
+            <div class="thought-stream" id="thoughtStream">
+              <div class="thought-item">
+                <span class="thought-time">14:02:10</span>
+                <span class="thought-agent text-cyan">[Parser]</span>
+                <span class="thought-text">Memproses file "Riset_Down_Syndrome_Hybrid_CNN.pdf" (2.666 citra referensi).</span>
+              </div>
+              <div class="thought-item">
+                <span class="thought-time">14:02:18</span>
+                <span class="thought-agent text-purple">[Peneliti]</span>
+                <span class="thought-text">Melakukan chunking dokumen menjadi 86 segmen semantik dengan overlap 150 token.</span>
+              </div>
+              <div class="thought-item">
+                <span class="thought-time">14:02:29</span>
+                <span class="thought-agent text-emerald">[Analis]</span>
+                <span class="thought-text">Cross-check klaim sensitivitas 92.32% terhadap tabel 4. Klaim terverifikasi valid.</span>
+              </div>
+              <div class="thought-item">
+                <span class="thought-time">14:02:41</span>
+                <span class="thought-agent text-amber">[Penulis]</span>
+                <span class="thought-text">Menyusun draf sintesis eksekutif dengan 4 pilar analisis komparatif.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">📌 Sorotan Riset Terverifikasi</h3>
+            </div>
+            <div class="highlight-list">
+              <div class="highlight-item">
+                <div class="highlight-badge">92.32%</div>
+                <div class="highlight-text">Akurasi validasi hibrida InceptionV3 + EfficientNetB3 pada 2.666 sampel.</div>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-badge">1 KASUS</div>
+                <div class="highlight-text">Tingkat False Negatives berhasil ditekan hingga tersisa 1 kasus klinis.</div>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-badge">86 CHUNKS</div>
+                <div class="highlight-text">Index pengetahuan semantik tersimpan pada vector memory berkecepatan tinggi.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: DOCUMENTS & OCR -->
+    <section class="view-section" id="view-documents">
+      <div class="docs-container">
+        <div class="docs-header">
+          <div>
+            <h2 class="view-title">Manajemen Dokumen & OCR</h2>
+            <p class="view-subtitle">Unggah berkas PDF, paper akademik, atau dokumen teknis untuk diindeks oleh Agent Parser.</p>
+          </div>
+          <button class="btn-primary" id="btnUploadDoc">
+            <span>📤</span> Unggah Berkas Baru
+          </button>
+        </div>
+
+        <div class="docs-grid">
+          <!-- Document Card 1 -->
+          <div class="doc-card">
+            <div class="doc-top">
+              <div class="doc-file-icon">📄</div>
+              <span class="doc-badge badge-success">Terindeks OCR</span>
+            </div>
+            <h3 class="doc-title">Riset_Down_Syndrome_Hybrid_CNN.pdf</h3>
+            <p class="doc-desc">Paper publikasi ilmiah deteksi dini Down Syndrome balita berbasis ensemble hibrida fine-tuning.</p>
+            <div class="doc-meta-row">
+              <span>Halaman: 14</span>
+              <span>Ukuran: 2.4 MB</span>
+              <span>Chunk: 86</span>
+            </div>
+            <div class="doc-actions">
+              <button class="doc-action-btn">🔍 Lihat Teks Hasil OCR</button>
+              <button class="doc-action-btn">⚡ Re-Index</button>
+            </div>
+          </div>
+
+          <!-- Document Card 2 -->
+          <div class="doc-card">
+            <div class="doc-top">
+              <div class="doc-file-icon">📄</div>
+              <span class="doc-badge badge-success">Terindeks OCR</span>
+            </div>
+            <h3 class="doc-title">Pediatric_Pneumonia_Classification_Report.pdf</h3>
+            <p class="doc-desc">Laporan evaluasi klinis klasifikasi citra rontgen dada 3 kelas (Normal, Bakteri, Virus).</p>
+            <div class="doc-meta-row">
+              <span>Halaman: 9</span>
+              <span>Ukuran: 1.8 MB</span>
+              <span>Chunk: 42</span>
+            </div>
+            <div class="doc-actions">
+              <button class="doc-action-btn">🔍 Lihat Teks Hasil OCR</button>
+              <button class="doc-action-btn">⚡ Re-Index</button>
+            </div>
+          </div>
+
+          <!-- Document Card 3 -->
+          <div class="doc-card">
+            <div class="doc-top">
+              <div class="doc-file-icon">📄</div>
+              <span class="doc-badge badge-processing">Dalam Antrean</span>
+            </div>
+            <h3 class="doc-title">OrthoScan_YOLOv8s_Technical_Spec.pdf</h3>
+            <p class="doc-desc">Spesifikasi arsitektur deteksi fraktur radiografi 7 kelas anatomi tulang.</p>
+            <div class="doc-meta-row">
+              <span>Halaman: 18</span>
+              <span>Ukuran: 3.1 MB</span>
+              <span>Chunk: --</span>
+            </div>
+            <div class="doc-actions">
+              <button class="doc-action-btn">🔍 Pratinjau Dokumen</button>
+              <button class="doc-action-btn">▶️ Mulai Parsing</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: PIPELINE AGEN -->
+    <section class="view-section" id="view-pipeline">
+      <div class="pipeline-container">
+        <h2 class="view-title">Alur Kerja Orkestrasi Multi-Agen</h2>
+        <p class="view-subtitle">Pipeline otonom 4 lapis berurutan untuk menjamin sintesis yang akurat, terstruktur, dan terbebas dari halusinasi.</p>
+
+        <div class="pipeline-steps">
+          <div class="pipeline-card">
+            <div class="step-num">01</div>
+            <div class="step-icon">📄</div>
+            <h3 class="step-title">Agent Parser</h3>
+            <p class="step-desc">Mengekstrak layout PDF, tabel data, citra, dan hierarki heading menggunakan PyMuPDF4LLM & OCR engine.</p>
+            <div class="step-status">Status: Selesai (100%)</div>
+          </div>
+
+          <div class="pipeline-arrow">➔</div>
+
+          <div class="pipeline-card">
+            <div class="step-num">02</div>
+            <div class="step-icon">🔬</div>
+            <h3 class="step-title">Agent Peneliti</h3>
+            <p class="step-desc">Melakukan RAG semantik mendalam, mengambil potongan konteks paling relevan, dan memetakan referensi silang.</p>
+            <div class="step-status">Status: Selesai (100%)</div>
+          </div>
+
+          <div class="pipeline-arrow">➔</div>
+
+          <div class="pipeline-card">
+            <div class="step-num">03</div>
+            <div class="step-icon">⚖️</div>
+            <h3 class="step-title">Agent Analis</h3>
+            <p class="step-desc">Memeriksa kembali kebenaran faktual, mendeteksi kontradiksi angka, serta menghitung metrik bukti pendukung.</p>
+            <div class="step-status">Status: Selesai (100%)</div>
+          </div>
+
+          <div class="pipeline-arrow">➔</div>
+
+          <div class="pipeline-card">
+            <div class="step-num">04</div>
+            <div class="step-icon">✍️</div>
+            <h3 class="step-title">Agent Penulis</h3>
+            <p class="step-desc">Menyusun dokumen Markdown terstruktur dengan format akademik, tabel perbandingan, dan kutipan berbasis sumber.</p>
+            <div class="step-status">Status: Draf Siap</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: RESULTS / SINTESIS -->
+    <section class="view-section" id="view-results">
+      <div class="results-layout">
+        <div class="results-main">
+          <div class="results-header">
+            <div>
+              <span class="report-badge">FINAL SYNTHESIS REPORT</span>
+              <h2 class="report-title">Sintesis Komparatif: Ensemble Hibrida Deteksi Dini Down Syndrome</h2>
+            </div>
+            <div class="report-actions">
+              <button class="btn-ghost" id="btnCopyReport">📋 Salin Markdown</button>
+              <button class="btn-primary" id="btnDownloadReport">📥 Unduh Hasil</button>
+            </div>
+          </div>
+
+          <article class="markdown-preview">
+            <h3>1. Ringkasan Eksekutif</h3>
+            <p>
+              Penelitian ini mengusulkan model <strong>Hybrid CNN</strong> berbasis kombinasi <em>InceptionV3</em> dan <em>EfficientNetB3</em> untuk meningkatkan akurasi skrining dini Down Syndrome pada citra wajah balita. Dari evaluasi komparatif terhadap 2.666 citra wajah, arsitektur ensemble mampu mengungguli model tunggal konvensional baik dari segi akurasi maupun reduksi <em>False Negatives</em>.
+            </p>
+
+            <h3>2. Metrik Performa Kunci</h3>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Model / Arsitektur</th>
+                  <th>Akurasi Validasi</th>
+                  <th>Sensitivitas (Recall)</th>
+                  <th>False Negatives</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>InceptionV3 Tunggal</td>
+                  <td>88.45%</td>
+                  <td>87.10%</td>
+                  <td>14 Kasus</td>
+                </tr>
+                <tr>
+                  <td>EfficientNetB3 Tunggal</td>
+                  <td>90.15%</td>
+                  <td>89.60%</td>
+                  <td>8 Kasus</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>Proposed Hybrid CNN Ensemble</strong></td>
+                  <td><strong>92.32%</strong></td>
+                  <td><strong>98.92%</strong></td>
+                  <td><strong>1 Kasus</strong></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>3. Kesimpulan & Nilai Tambah Klinis</h3>
+            <p>
+              Dengan meminimalkan <em>False Negatives</em> hingga hanya tersisa 1 kasus klinis, model ini menawarkan keandalan tinggi sebagai alat skrining awal non-invasif yang dapat diakses di fasilitas kesehatan primer sebelum pengujian genetik lanjutan seperti kariotipe.
+            </p>
+          </article>
+        </div>
+
+        <!-- Audit Fakta Sidebar -->
+        <div class="audit-sidebar">
+          <div class="audit-card">
+            <h3 class="audit-title">🛡️ Laporan Audit Fakta</h3>
+            <div class="audit-score-circle">
+              <span class="score-number">98.5%</span>
+              <span class="score-label">Factual Grounding Score</span>
+            </div>
+            <div class="audit-checklist">
+              <div class="audit-check-item valid">
+                <span>✅</span> Metrik akurasi 92.32% terverifikasi pada tabel 4 halaman 8.
+              </div>
+              <div class="audit-check-item valid">
+                <span>✅</span> Jumlah citra (2.666) cocok dengan deskripsi dataset bab 3.
+              </div>
+              <div class="audit-check-item valid">
+                <span>✅</span> Tidak ditemukan klaim sintetis tanpa rujukan teks.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: TOKEN USAGE -->
+    <section class="view-section" id="view-tokens">
+      <div class="tokens-container">
+        <h2 class="view-title">Konsumsi Token & Kecepatan Inferensi</h2>
+        <p class="view-subtitle">Pemantauan transparansi penggunaan token LLM dan beban komputasi per agen.</p>
+
+        <div class="token-stat-cards">
+          <div class="token-stat-card">
+            <div class="token-stat-label">Total Token Diproses</div>
+            <div class="token-stat-value">48,290</div>
+            <div class="token-stat-sub">Input: 36,410 · Output: 11,880</div>
+          </div>
+          <div class="token-stat-card">
+            <div class="token-stat-label">Rata-rata Inferensi</div>
+            <div class="token-stat-value">1.42s</div>
+            <div class="token-stat-sub">Streaming kecepatan ~48 tok/s</div>
+          </div>
+          <div class="token-stat-card">
+            <div class="token-stat-label">Estimasi Biaya Sesi</div>
+            <div class="token-stat-value">Rp 185</div>
+            <div class="token-stat-sub">Efisiensi RAG cache 84%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

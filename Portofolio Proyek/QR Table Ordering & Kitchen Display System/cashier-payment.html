@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pembayaran Kasir - Cafe Fari POS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- Cashier Sidebar -->
+    <aside class="sidebar cashier-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">CAFE FARI</h2>
+        <span class="sidebar-subtitle">Cashier Point of Sale</span>
+        <div style="margin-top: 10px; font-size: 13px; color: var(--color-warm-gold); background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px;">
+          💵 Shift: Rina Kasir
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="cashier-dashboard.html" class="menu-link">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="cashier-payment.html" class="menu-link active">
+            <span>💵</span>
+            <span>Pembayaran Kasir</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="cashier-history.html" class="menu-link">
+            <span>🧾</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar Shift</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Pembayaran & Kasir POS</h1>
+          <p class="page-subtitle">Proses pelunasan tagihan meja, edit pesanan kasir, dan cetak struk.</p>
+        </div>
+        <div>
+          <button class="btn-add" id="btnRefreshPayments" style="background:#2d3436;">
+            🔄 Refresh Antrian
+          </button>
+        </div>
+      </div>
+
+      <!-- Table of Unpaid Orders -->
+      <div class="admin-card">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Meja</th>
+                <th>Nama Pelanggan</th>
+                <th>Waktu Pesan</th>
+                <th>Item Pesanan</th>
+                <th>Total Tagihan</th>
+                <th>Status</th>
+                <th>Aksi Kasir</th>
+              </tr>
+            </thead>
+            <tbody id="unpaidOrdersTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- PAYMENT POS MODAL -->
+  <div class="modal-overlay" id="paymentProcessModal">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 id="paymentModalTitle">Kasir: Meja 01</h3>
+        <button class="btn-close-modal" id="btnClosePaymentModal">&times;</button>
+      </div>
+
+      <!-- Editable Items Container -->
+      <div style="background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; padding: 14px; margin-bottom: 20px; max-height: 250px; overflow-y: auto;">
+        <div style="font-size: 12px; font-weight: 700; color: #555; margin-bottom: 8px; text-transform: uppercase;">
+          Rincian Item (Kasir dapat menambah/mengurangi qty):
+        </div>
+        <div id="paymentModalItemsList">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Cash Calculation & Quick Cash Buttons -->
+      <div style="background: #f1f2f6; padding: 18px; border-radius: 10px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <span style="font-size: 16px; font-weight: bold; color: var(--color-deep-dark);">Total Tagihan:</span>
+          <span id="posTotalBillDisplay" style="font-size: 24px; font-weight: bold; color: var(--color-deep-dark);">Rp 0</span>
+        </div>
+
+        <!-- Quick Cash Suggestion Buttons -->
+        <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+          <button type="button" class="btn-secondary" id="btnQuickExact" style="background:var(--color-dark-coffee); font-size:11px;">💵 Uang Pas</button>
+          <button type="button" class="btn-secondary" onclick="addQuickCash(20000)">+ Rp 20.000</button>
+          <button type="button" class="btn-secondary" onclick="addQuickCash(50000)">+ Rp 50.000</button>
+          <button type="button" class="btn-secondary" onclick="addQuickCash(100000)">+ Rp 100.000</button>
+          <button type="button" class="btn-secondary" onclick="clearCash()" style="background:#e74c3c;">Reset</button>
+        </div>
+
+        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 10px;">
+          <label style="width: 140px; font-weight: bold; font-size: 14px;">Uang Diterima:</label>
+          <input 
+            type="number" 
+            id="posCashInput" 
+            class="form-input" 
+            placeholder="0" 
+            style="flex: 1; font-size: 18px; font-weight: bold; text-align: right;"
+          />
+        </div>
+
+        <div style="display: flex; gap: 15px; align-items: center;">
+          <label style="width: 140px; font-weight: bold; font-size: 14px;">Kembalian:</label>
+          <input 
+            type="text" 
+            id="posChangeDisplay" 
+            class="form-input" 
+            value="Rp 0" 
+            disabled 
+            style="flex: 1; font-size: 18px; font-weight: bold; text-align: right; background: #e8f8f0; color: #27ae60;"
+          />
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn-secondary" id="btnCancelPayment" style="padding: 10px 20px;">Batal</button>
+        <button type="button" class="btn-add" id="btnConfirmPayAndPrint" style="padding: 10px 24px; font-size: 14px; background: var(--color-green-success);">
+          ✔ Bayar & Cetak Struk
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- THERMAL RECEIPT MODAL -->
+  <div class="modal-overlay" id="thermalReceiptModal">
+    <div class="modal-box" style="max-width: 380px; padding: 16px;">
+      
+      <!-- Thermal Paper -->
+      <div class="receipt-paper" id="receiptPrintArea">
+        <div class="receipt-header">
+          <h2>CAFE FARI</h2>
+          <div>Jl. Kopi Harum No. 12, Jakarta</div>
+          <div>Telp: (021) 7890-1234</div>
+          <div class="receipt-divider"></div>
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span id="rcptOrderNo">Order: #101</span>
+            <span id="rcptTableNo">Meja: 01</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span id="rcptDateTime">14/11/2025 12:30</span>
+            <span id="rcptKasirName">Kasir: Rina</span>
+          </div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <!-- Items -->
+        <div id="rcptItemsList" style="margin: 8px 0;">
+          <!-- Injected items -->
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:4px;">
+          <span>TOTAL</span>
+          <span id="rcptTotalBill">Rp 0</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span>BAYAR (TUNAI)</span>
+          <span id="rcptCashReceived">Rp 0</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span>KEMBALI</span>
+          <span id="rcptChangeDue">Rp 0</span>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div style="text-align:center; font-size:11px; margin-top:10px;">
+          Terima kasih atas kunjungan Anda!<br/>
+          Follow IG: @cafefari.id
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button type="button" class="btn-secondary" id="btnCloseReceipt" style="flex: 1;">Tutup</button>
+        <button type="button" class="btn-add" onclick="window.print()" style="flex: 1; justify-content:center; background:#2d3436;">
+          🖨️ Cetak Struk
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let activeUnpaid = [];
+    let currentPayingOrder = null;
+    let currentCashReceived = 0;
+
+    function renderUnpaidList() {
+      activeUnpaid = window.CafeStore.getUnpaidOrders();
+      const tbody = document.getElementById('unpaidOrdersTableBody');
+      tbody.innerHTML = '';
+
+      if (activeUnpaid.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align:center; padding: 40px; color:#777;">
+              🎉 Tidak ada antrian pembayaran belum lunas. Semua meja sudah beres!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      activeUnpaid.forEach(o => {
+        const tr = document.createElement('tr');
+        const itemsSummary = o.items.map(i => `${i.quantity}x ${i.name}`).join(', ');
+
+        tr.innerHTML = `
+          <td><strong>#${o.id}</strong></td>
+          <td><span style="background:var(--color-dark-coffee); color:var(--color-warm-gold); padding:3px 8px; border-radius:12px; font-weight:600; font-size:11px;">Meja ${o.table_id}</span></td>
+          <td><strong>${o.customer_name}</strong></td>
+          <td>${window.CafeStore.formatTime(o.created_at)}</td>
+          <td style="max-width: 260px; font-size:12px; color:#555;" title="${itemsSummary}">
+            ${itemsSummary.length > 50 ? itemsSummary.slice(0, 50) + '...' : itemsSummary}
+          </td>
+          <td><strong style="font-size:15px; color:var(--color-deep-dark);">${window.CafeStore.formatRupiah(o.total_price)}</strong></td>
+          <td><span class="status-badge unpaid">UNPAID</span></td>
+          <td>
+            <button class="btn-add" style="padding:6px 12px; font-size:12px; background:var(--color-green-success);" onclick="openPaymentModal(${o.id})">
+              💵 Proses Bayar
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openPaymentModal(orderId) {
+      const order = window.CafeStore.getOrderById(orderId);
+      if (!order) return;
+
+      currentPayingOrder = JSON.parse(JSON.stringify(order));
+      currentCashReceived = 0;
+
+      document.getElementById('paymentModalTitle').textContent = `Kasir POS: Meja ${currentPayingOrder.table_id} (#${currentPayingOrder.id})`;
+      document.getElementById('posCashInput').value = '';
+      
+      renderModalItems();
+      updatePosCalculations();
+
+      document.getElementById('paymentProcessModal').classList.add('active');
+    }
+
+    function renderModalItems() {
+      const box = document.getElementById('paymentModalItemsList');
+      box.innerHTML = '';
+
+      currentPayingOrder.items.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.alignItems = 'center';
+        row.style.padding = '8px 0';
+        row.style.borderBottom = '1px solid #eee';
+
+        row.innerHTML = `
+          <div>
+            <div style="font-weight:600; font-size:13px;">${item.name}</div>
+            <div style="font-size:11px; color:#777;">${window.CafeStore.formatRupiah(item.price)} per porsi</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn-qty" onclick="editPosQty(${idx}, -1)">-</button>
+            <span style="font-weight:bold; min-width:18px; text-align:center;">${item.quantity}</span>
+            <button type="button" class="btn-qty" onclick="editPosQty(${idx}, 1)">+</button>
+            <span style="font-weight:bold; width:80px; text-align:right;">${window.CafeStore.formatRupiah(item.price * item.quantity)}</span>
+            <button type="button" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:16px;" onclick="deletePosItem(${idx})">&times;</button>
+          </div>
+        `;
+        box.appendChild(row);
+      });
+    }
+
+    function editPosQty(idx, delta) {
+      currentPayingOrder.items[idx].quantity += delta;
+      if (currentPayingOrder.items[idx].quantity <= 0) {
+        currentPayingOrder.items.splice(idx, 1);
+      }
+      recalcPosOrderTotal();
+      renderModalItems();
+      updatePosCalculations();
+    }
+
+    function deletePosItem(idx) {
+      if (confirm('Hapus item ini dari tagihan?')) {
+        currentPayingOrder.items.splice(idx, 1);
+        recalcPosOrderTotal();
+        renderModalItems();
+        updatePosCalculations();
+      }
+    }
+
+    function recalcPosOrderTotal() {
+      const sub = currentPayingOrder.items.reduce((acc, i) => acc + (i.price * i.quantity), 0);
+      const tax = Math.round(sub * 0.1);
+      currentPayingOrder.total_price = sub + tax;
+    }
+
+    function updatePosCalculations() {
+      document.getElementById('posTotalBillDisplay').textContent = window.CafeStore.formatRupiah(currentPayingOrder.total_price);
+      
+      const change = currentCashReceived - currentPayingOrder.total_price;
+      const changeEl = document.getElementById('posChangeDisplay');
+
+      if (change >= 0) {
+        changeEl.value = window.CafeStore.formatRupiah(change);
+        changeEl.style.background = '#e8f8f0';
+        changeEl.style.color = '#27ae60';
+      } else {
+        changeEl.value = 'Kurang ' + window.CafeStore.formatRupiah(Math.abs(change));
+        changeEl.style.background = '#fdeeed';
+        changeEl.style.color = '#c0392b';
+      }
+    }
+
+    function addQuickCash(amount) {
+      currentCashReceived += amount;
+      document.getElementById('posCashInput').value = currentCashReceived;
+      updatePosCalculations();
+    }
+
+    function clearCash() {
+      currentCashReceived = 0;
+      document.getElementById('posCashInput').value = '';
+      updatePosCalculations();
+    }
+
+    document.getElementById('btnQuickExact').addEventListener('click', () => {
+      currentCashReceived = currentPayingOrder.total_price;
+      document.getElementById('posCashInput').value = currentCashReceived;
+      updatePosCalculations();
+    });
+
+    document.getElementById('posCashInput').addEventListener('input', (e) => {
+      currentCashReceived = parseInt(e.target.value) || 0;
+      updatePosCalculations();
+    });
+
+    // Close Modals
+    document.getElementById('btnClosePaymentModal').addEventListener('click', () => {
+      document.getElementById('paymentProcessModal').classList.remove('active');
+    });
+    document.getElementById('btnCancelPayment').addEventListener('click', () => {
+      document.getElementById('paymentProcessModal').classList.remove('active');
+    });
+
+    // Confirm Payment & Show Thermal Receipt
+    document.getElementById('btnConfirmPayAndPrint').addEventListener('click', () => {
+      if (currentCashReceived < currentPayingOrder.total_price) {
+        alert('Nominal uang diterima masih kurang dari total tagihan!');
+        document.getElementById('posCashInput').focus();
+        return;
+      }
+
+      const change = currentCashReceived - currentPayingOrder.total_price;
+
+      // Complete in store
+      window.CafeStore.completePayment(currentPayingOrder.id, {
+        items: currentPayingOrder.items,
+        total_price: currentPayingOrder.total_price,
+        payment_method: 'Tunai',
+        cash_received: currentCashReceived,
+        change: change,
+        cashier_name: 'Rina Kasir'
+      });
+
+      // Close POS modal
+      document.getElementById('paymentProcessModal').classList.remove('active');
+
+      // Populate thermal receipt
+      document.getElementById('rcptOrderNo').textContent = `Order: #${currentPayingOrder.id}`;
+      document.getElementById('rcptTableNo').textContent = `Meja: ${currentPayingOrder.table_id}`;
+      document.getElementById('rcptDateTime').textContent = window.CafeStore.formatDateTime(new Date().toISOString());
+      
+      const rList = document.getElementById('rcptItemsList');
+      rList.innerHTML = '';
+      currentPayingOrder.items.forEach(it => {
+        const line = document.createElement('div');
+        line.style.display = 'flex';
+        line.style.justifyContent = 'space-between';
+        line.style.marginBottom = '3px';
+        line.innerHTML = `
+          <span>${it.name} x${it.quantity}</span>
+          <span>${window.CafeStore.formatRupiah(it.price * it.quantity)}</span>
+        `;
+        rList.appendChild(line);
+      });
+
+      document.getElementById('rcptTotalBill').textContent = window.CafeStore.formatRupiah(currentPayingOrder.total_price);
+      document.getElementById('rcptCashReceived').textContent = window.CafeStore.formatRupiah(currentCashReceived);
+      document.getElementById('rcptChangeDue').textContent = window.CafeStore.formatRupiah(change);
+
+      // Open Receipt Modal
+      document.getElementById('thermalReceiptModal').classList.add('active');
+      renderUnpaidList();
+    });
+
+    document.getElementById('btnCloseReceipt').addEventListener('click', () => {
+      document.getElementById('thermalReceiptModal').classList.remove('active');
+    });
+
+    document.getElementById('btnRefreshPayments').addEventListener('click', () => {
+      renderUnpaidList();
+    });
+
+    // Auto open specific order if query param supplied
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderIdParam = urlParams.get('orderId');
+    renderUnpaidList();
+
+    if (orderIdParam) {
+      setTimeout(() => {
+        openPaymentModal(orderIdParam);
+      }, 200);
+    }
+  </script>
+</body>
+</html>

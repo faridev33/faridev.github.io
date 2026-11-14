@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Produk - Admin Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- SuperAdmin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        <h1 class="sidebar-title">Cafe Fari Admin</h1>
+        <small class="sidebar-subtitle">Hi, Super Administrator</small>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="admin-dashboard.html" class="menu-link">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-products.html" class="menu-link active">
+            <span>☕</span>
+            <span>Produk (Menu)</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-tables.html" class="menu-link">
+            <span>🪑</span>
+            <span>Manajemen Meja</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-order-items.html" class="menu-link">
+            <span>📝</span>
+            <span>Detail Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-transactions.html" class="menu-link">
+            <span>💰</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-users.html" class="menu-link">
+            <span>👥</span>
+            <span>Pengguna (Staff)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Manajemen Menu & Produk</h1>
+          <p class="page-subtitle">Kelola harga, foto, kategori, dan varian kustomisasi produk Cafe Fari.</p>
+        </div>
+        <div>
+          <button class="btn-add" id="btnOpenAddProduct">
+            ➕ Tambah Menu Baru
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Gambar</th>
+                <th>Nama Menu</th>
+                <th>Kategori</th>
+                <th>Harga Dasar</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="adminProductsTableBody">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD / EDIT PRODUCT MODAL -->
+  <div class="modal-overlay" id="productFormModal">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 id="productModalTitle">Tambah Menu Baru</h3>
+        <button class="btn-close-modal" id="btnCloseProductModal">&times;</button>
+      </div>
+
+      <form id="productForm">
+        <input type="hidden" id="prodFormId" />
+
+        <div class="form-group">
+          <label>Nama Menu</label>
+          <input type="text" id="prodFormName" class="form-input" required placeholder="Cth: Kopi Susu Senja" />
+        </div>
+
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="prodFormCategory" class="form-input" required>
+            <option value="Makanan">Makanan</option>
+            <option value="Minuman">Minuman</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Harga Dasar (Rp)</label>
+          <input type="number" id="prodFormPrice" class="form-input" required placeholder="Cth: 25000" />
+        </div>
+
+        <div class="form-group">
+          <label>URL Gambar / Foto</label>
+          <input type="text" id="prodFormImage" class="form-input" placeholder="URL gambar atau assets/images/..." />
+        </div>
+
+        <div class="form-group">
+          <label>Deskripsi Menu</label>
+          <textarea id="prodFormDesc" class="form-input" rows="2" placeholder="Keterangan bahan dan rasa"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Status Ketersediaan</label>
+          <select id="prodFormStatus" class="form-input">
+            <option value="Available">Available (Tersedia)</option>
+            <option value="Out of Stock">Out of Stock (Habis)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn-secondary" id="btnCancelProductModal">Batal</button>
+          <button type="submit" class="btn-add">Simpan Produk</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- OPTION VARIANT MODAL -->
+  <div class="modal-overlay" id="productOptionConfigModal">
+    <div class="modal-box" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3 id="optConfigTitle">Atur Opsi Varian</h3>
+        <button class="btn-close-modal" id="btnCloseOptConfigModal">&times;</button>
+      </div>
+
+      <div id="optConfigList" style="margin-bottom:15px;">
+        <!-- Injected options -->
+      </div>
+
+      <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px;">
+        <div style="font-weight:600; font-size:12px; margin-bottom:6px;">Tambah Varian Pilihan Baru:</div>
+        <input type="text" id="newOptName" class="form-input" placeholder="Nama Opsi (cth: Level Pedas)" style="margin-bottom:6px;" />
+        <input type="text" id="newOptChoices" class="form-input" placeholder="Pilihan dipisah koma (cth: Level 1, Level 2, Level 3)" style="margin-bottom:8px;" />
+        <button type="button" class="btn-add" id="btnAddOptionRow" style="padding:4px 10px; font-size:11px;">+ Tambah Opsi</button>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" class="btn-secondary" id="btnCloseOptConfigDone">Selesai</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeProducts = [];
+    let currentOptionProduct = null;
+
+    function renderProductsTable() {
+      activeProducts = window.CafeStore.getProducts();
+      const tbody = document.getElementById('adminProductsTableBody');
+      tbody.innerHTML = '';
+
+      activeProducts.forEach(p => {
+        const isAvail = (p.status === 'Available');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#${p.id}</strong></td>
+          <td>
+            <div class="table-img">
+              <img src="${p.image}" alt="${p.name}" />
+            </div>
+          </td>
+          <td>
+            <strong>${p.name}</strong>
+            ${p.badge ? `<span style="font-size:10px; background:var(--color-warm-gold); color:var(--color-deep-dark); padding:2px 6px; border-radius:4px; margin-left:6px; font-weight:bold;">${p.badge}</span>` : ''}
+          </td>
+          <td>${p.category}</td>
+          <td><strong>${window.CafeStore.formatRupiah(p.price)}</strong></td>
+          <td>
+            <span class="status-badge ${isAvail ? 'available' : 'unavailable'}">
+              ${p.status}
+            </span>
+          </td>
+          <td>
+            <button class="btn-secondary" style="background:#17a2b8; margin-right:4px;" onclick="openOptionsModal(${p.id})">
+              Atur Opsi
+            </button>
+            <button class="btn-edit" onclick="openEditProduct(${p.id})">Edit</button>
+            <button class="btn-delete" onclick="deleteProd(${p.id}, '${p.name}')">Hapus</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal Add / Edit
+    document.getElementById('btnOpenAddProduct').addEventListener('click', () => {
+      document.getElementById('productModalTitle').textContent = 'Tambah Menu Baru';
+      document.getElementById('prodFormId').value = '';
+      document.getElementById('prodFormName').value = '';
+      document.getElementById('prodFormCategory').value = 'Makanan';
+      document.getElementById('prodFormPrice').value = '';
+      document.getElementById('prodFormImage').value = 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=500&auto=format&fit=crop&q=80';
+      document.getElementById('prodFormDesc').value = '';
+      document.getElementById('prodFormStatus').value = 'Available';
+      document.getElementById('productFormModal').classList.add('active');
+    });
+
+    function openEditProduct(id) {
+      const p = activeProducts.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('productModalTitle').textContent = `Edit Menu #${p.id}`;
+      document.getElementById('prodFormId').value = p.id;
+      document.getElementById('prodFormName').value = p.name;
+      document.getElementById('prodFormCategory').value = p.category;
+      document.getElementById('prodFormPrice').value = p.price;
+      document.getElementById('prodFormImage').value = p.image;
+      document.getElementById('prodFormDesc').value = p.desc || '';
+      document.getElementById('prodFormStatus').value = p.status;
+      document.getElementById('productFormModal').classList.add('active');
+    }
+
+    document.getElementById('productForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('prodFormId').value;
+      const data = {
+        name: document.getElementById('prodFormName').value.trim(),
+        category: document.getElementById('prodFormCategory').value,
+        price: parseInt(document.getElementById('prodFormPrice').value) || 0,
+        image: document.getElementById('prodFormImage').value.trim() || 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=500&auto=format&fit=crop&q=80',
+        desc: document.getElementById('prodFormDesc').value.trim(),
+        status: document.getElementById('prodFormStatus').value
+      };
+
+      if (id) data.id = parseInt(id);
+
+      window.CafeStore.saveProduct(data);
+      document.getElementById('productFormModal').classList.remove('active');
+      renderProductsTable();
+    });
+
+    function deleteProd(id, name) {
+      if (confirm(`Apakah Anda yakin ingin menghapus menu "${name}"?`)) {
+        window.CafeStore.deleteProduct(id);
+        renderProductsTable();
+      }
+    }
+
+    // Manage Options Modal
+    function openOptionsModal(id) {
+      currentOptionProduct = window.CafeStore.getProductById(id);
+      if (!currentOptionProduct) return;
+
+      document.getElementById('optConfigTitle').textContent = `Atur Opsi: ${currentOptionProduct.name}`;
+      renderOptionList();
+      document.getElementById('productOptionConfigModal').classList.add('active');
+    }
+
+    function renderOptionList() {
+      const box = document.getElementById('optConfigList');
+      box.innerHTML = '';
+      const opts = currentOptionProduct.options || [];
+
+      if (opts.length === 0) {
+        box.innerHTML = '<div style="color:#777; font-size:12px;">Belum ada varian kustomisasi untuk menu ini.</div>';
+        return;
+      }
+
+      opts.forEach((opt, idx) => {
+        const item = document.createElement('div');
+        item.style.padding = '8px';
+        item.style.background = '#f1f2f6';
+        item.style.borderRadius = '6px';
+        item.style.marginBottom = '6px';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+
+        item.innerHTML = `
+          <div>
+            <strong>${opt.name}</strong>
+            <div style="font-size:11px; color:#555;">${opt.choices.join(', ')}</div>
+          </div>
+          <button type="button" style="color:#e74c3c; border:none; background:none; cursor:pointer;" onclick="deleteOptionRow(${idx})">Hapus</button>
+        `;
+        box.appendChild(item);
+      });
+    }
+
+    function deleteOptionRow(idx) {
+      currentOptionProduct.options.splice(idx, 1);
+      window.CafeStore.saveProduct(currentOptionProduct);
+      renderOptionList();
+    }
+
+    document.getElementById('btnAddOptionRow').addEventListener('click', () => {
+      const name = document.getElementById('newOptName').value.trim();
+      const rawChoices = document.getElementById('newOptChoices').value.trim();
+
+      if (!name || !rawChoices) {
+        alert('Mohon isi nama opsi dan pilihan!');
+        return;
+      }
+
+      const choices = rawChoices.split(',').map(s => s.trim()).filter(Boolean);
+      if (!currentOptionProduct.options) currentOptionProduct.options = [];
+
+      currentOptionProduct.options.push({ name, choices });
+      window.CafeStore.saveProduct(currentOptionProduct);
+
+      document.getElementById('newOptName').value = '';
+      document.getElementById('newOptChoices').value = '';
+      renderOptionList();
+    });
+
+    document.getElementById('btnCloseProductModal').addEventListener('click', () => {
+      document.getElementById('productFormModal').classList.remove('active');
+    });
+    document.getElementById('btnCancelProductModal').addEventListener('click', () => {
+      document.getElementById('productFormModal').classList.remove('active');
+    });
+    document.getElementById('btnCloseOptConfigModal').addEventListener('click', () => {
+      document.getElementById('productOptionConfigModal').classList.remove('active');
+    });
+    document.getElementById('btnCloseOptConfigDone').addEventListener('click', () => {
+      document.getElementById('productOptionConfigModal').classList.remove('active');
+    });
+
+    renderProductsTable();
+  </script>
+</body>
+</html>

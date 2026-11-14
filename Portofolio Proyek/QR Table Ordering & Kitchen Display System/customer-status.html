@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Status Pesanan - Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background-color: #1e1e1e;">
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="customer-viewport">
+    <div class="mobile-wrapper">
+      
+      <!-- Customer Header -->
+      <header class="customer-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:22px;">☕</span>
+          <h1 class="cafe-title">Status Pesanan</h1>
+        </div>
+        <div class="table-info" id="tableBadgeDisplay">
+          Meja 01
+        </div>
+      </header>
+
+      <!-- Status Content -->
+      <div class="order-page-body" id="statusContainer">
+        <!-- Rendered by JavaScript -->
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableId = urlParams.get('table') || '1';
+    const orderIdParam = urlParams.get('orderId');
+    document.getElementById('tableBadgeDisplay').textContent = 'Meja ' + (tableId.padStart(2, '0'));
+
+    function renderStatus() {
+      let order = null;
+      if (orderIdParam) {
+        order = window.CafeStore.getOrderById(orderIdParam);
+      }
+      if (!order) {
+        order = window.CafeStore.getLatestOrderByTable(tableId);
+      }
+
+      const container = document.getElementById('statusContainer');
+
+      if (!order) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 60px 20px; color:#777;">
+            <div style="font-size:44px; margin-bottom:12px;">🍽️</div>
+            <h3 style="margin:0 0 8px 0; color:var(--color-dark-coffee);">Belum Ada Pesanan Aktif</h3>
+            <p style="font-size:13px; margin-bottom:20px;">Silakan pilih menu untuk meja Anda sekarang.</p>
+            <a href="customer-menu.html?table=${tableId}" class="btn-add" style="display:inline-block; font-size:13px; padding:10px 20px; border-radius:50px;">
+              + Buka Menu Cafe Fari
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      const isPaid = (order.payment_status === 'PAID');
+      const isCooking = (order.cooking_status === 'COOKING');
+      const isDone = (order.cooking_status === 'DONE');
+
+      // Determine step
+      let step1Class = 'done';
+      let step2Class = isDone ? 'done' : (isCooking ? 'active' : (isPaid ? 'active' : ''));
+      let step3Class = isDone ? 'done active' : '';
+
+      container.innerHTML = `
+        <!-- Status Card Alert -->
+        <div class="status-tracker-card ${isPaid ? 'paid' : 'unpaid'}">
+          <div style="font-size: 32px; margin-bottom: 8px;">
+            ${isDone ? '🎉' : (isPaid ? '🍳' : '⏳')}
+          </div>
+          <h2 style="font-size: 20px; margin: 0 0 6px 0;">
+            ${isDone 
+              ? 'Pesanan Siap Disajikan!' 
+              : (isPaid ? 'Sedang Diproses Dapur' : 'Menunggu Pembayaran Kasir')}
+          </h2>
+          <p style="font-size: 13px; margin: 0; line-height: 1.4;">
+            ${isDone 
+              ? 'Pesanan Anda sudah selesai dimasak dan segera diantar pelayan ke meja.' 
+              : (isPaid 
+                  ? 'Pembayaran berhasil dikonfirmasi. Tim dapur sedang memasak pesanan Anda.' 
+                  : 'Silakan lakukan pembayaran di Meja Kasir untuk memulai proses masak di dapur.')}
+          </p>
+        </div>
+
+        <!-- Timeline Steps -->
+        <div class="order-box" style="padding: 16px 12px;">
+          <div class="timeline-steps">
+            <div class="timeline-step ${step1Class}">
+              <div class="step-circle">1</div>
+              <div class="step-title">Diterima</div>
+            </div>
+            <div class="timeline-step ${step2Class}">
+              <div class="step-circle">2</div>
+              <div class="step-title">Dimasak</div>
+            </div>
+            <div class="timeline-step ${step3Class}">
+              <div class="step-circle">3</div>
+              <div class="step-title">Siap / Saji</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary Details -->
+        <div class="order-box">
+          <div class="order-box-title">
+            <span>🧾</span>
+            <span>Rincian Pesanan #${order.id}</span>
+          </div>
+
+          <div style="font-size: 12px; color: #666; margin-bottom: 12px; display:flex; justify-content:space-between;">
+            <span>Pemesan: <strong>${order.customer_name}</strong></span>
+            <span>Metode: <strong>${order.payment_method}</strong></span>
+          </div>
+
+          <div style="border-top: 1px solid #eee; padding-top: 8px;">
+            ${order.items.map(item => `
+              <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size:13px;">
+                <div>
+                  <span style="font-weight:600;">${item.quantity}x</span> ${item.name}
+                  ${item.optionsText ? `<div style="font-size:11px; color:#888;">${item.optionsText}</div>` : ''}
+                  ${item.note ? `<div style="font-size:11px; color:#a38870;">📝 ${item.note}</div>` : ''}
+                </div>
+                <div style="font-weight:600;">
+                  ${window.CafeStore.formatRupiah(item.price * item.quantity)}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="summary-row total" style="margin-top: 15px;">
+            <span>Total Tagihan</span>
+            <span>${window.CafeStore.formatRupiah(order.total_price)}</span>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div style="margin-top: 20px; text-align: center;">
+          <a href="customer-menu.html?table=${tableId}" class="btn-primary" style="display:block; padding: 12px; border-radius: 50px;">
+            ➕ Pesan Menu Tambahan
+          </a>
+        </div>
+      `;
+    }
+
+    // Auto-update live when storage changes (kitchen or cashier updates)
+    window.addEventListener('cafefari:update', (e) => {
+      if (e.detail && (e.detail.topic === 'orders' || e.detail.topic === 'transactions')) {
+        renderStatus();
+      }
+    });
+
+    renderStatus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riwayat Transaksi - Kasir Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- Cashier Sidebar -->
+    <aside class="sidebar cashier-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">CAFE FARI</h2>
+        <span class="sidebar-subtitle">Cashier Point of Sale</span>
+        <div style="margin-top: 10px; font-size: 13px; color: var(--color-warm-gold); background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px;">
+          💵 Shift: Rina Kasir
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="cashier-dashboard.html" class="menu-link">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="cashier-payment.html" class="menu-link">
+            <span>💵</span>
+            <span>Pembayaran Kasir</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="cashier-history.html" class="menu-link active">
+            <span>🧾</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar Shift</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Riwayat Transaksi Kasir</h1>
+          <p class="page-subtitle">Daftar struk transaksi lunas yang telah diproses oleh kasir.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <input 
+            type="text" 
+            id="transSearchInput" 
+            class="form-input" 
+            placeholder="Cari ID / Pelanggan..." 
+            style="width: 220px; padding: 6px 12px; font-size: 13px;"
+          />
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>No. Struk</th>
+                <th>Waktu Transaksi</th>
+                <th>Meja</th>
+                <th>Pelanggan</th>
+                <th>Metode Bayar</th>
+                <th>Total Tagihan</th>
+                <th>Kasir</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="historyDetailModal">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 id="histModalTitle">Detail Transaksi</h3>
+        <button class="btn-close-modal" id="btnCloseHistModal">&times;</button>
+      </div>
+
+      <div id="histModalContent" style="font-size: 13px;">
+        <!-- Injected by JS -->
+      </div>
+
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-secondary" id="btnCloseHistModal2">Tutup</button>
+        <button class="btn-add" onclick="window.print()" style="background:#2d3436;">🖨️ Cetak Ulang</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let transactions = [];
+
+    function renderHistoryTable(query = '') {
+      transactions = window.CafeStore.getTransactions();
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = transactions.filter(t => {
+        const str = `${t.id} ${t.customer_name} ${t.table_id}`.toLowerCase();
+        return str.includes(query.toLowerCase());
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr><td colspan="8" style="text-align:center; padding:30px; color:#777;">Tidak ada data riwayat transaksi.</td></tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#${t.id}</strong></td>
+          <td>${window.CafeStore.formatDateTime(t.created_at)}</td>
+          <td><span style="background:var(--color-dark-coffee); color:var(--color-warm-gold); padding:2px 8px; border-radius:10px; font-size:11px;">Meja ${t.table_id}</span></td>
+          <td><strong>${t.customer_name}</strong></td>
+          <td><span class="status-badge paid">${t.payment_method}</span></td>
+          <td><strong style="color:var(--color-deep-dark);">${window.CafeStore.formatRupiah(t.total_price)}</strong></td>
+          <td><small>${t.cashier_name || 'Kasir'}</small></td>
+          <td>
+            <button class="btn-secondary" style="font-size:11px;" onclick="viewDetail(${t.id})">
+              🔍 Detail Struk
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function viewDetail(id) {
+      const t = transactions.find(item => item.id === id);
+      if (!t) return;
+
+      document.getElementById('histModalTitle').textContent = `Struk Transaksi #${t.id}`;
+      const box = document.getElementById('histModalContent');
+
+      box.innerHTML = `
+        <div style="background:#f9f8f6; padding:12px; border-radius:8px; margin-bottom:12px;">
+          <div>Waktu: <strong>${window.CafeStore.formatDateTime(t.created_at)}</strong></div>
+          <div>Meja: <strong>Meja ${t.table_id}</strong> | Pelanggan: <strong>${t.customer_name}</strong></div>
+          <div>Metode: <strong>${t.payment_method}</strong> | Kasir: <strong>${t.cashier_name || 'Kasir'}</strong></div>
+        </div>
+
+        <div style="font-weight:bold; margin-bottom:6px;">Daftar Pesanan:</div>
+        <div style="border-top:1px dashed #ccc; padding-top:6px; margin-bottom:12px;">
+          ${(t.items || []).map(i => `
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>${i.name} x${i.quantity}</span>
+              <span>${window.CafeStore.formatRupiah(i.price * i.quantity)}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="border-top:1px solid #333; padding-top:8px; display:flex; justify-content:space-between; font-weight:bold; font-size:15px;">
+          <span>TOTAL</span>
+          <span>${window.CafeStore.formatRupiah(t.total_price)}</span>
+        </div>
+      `;
+
+      document.getElementById('historyDetailModal').classList.add('active');
+    }
+
+    document.getElementById('btnCloseHistModal').addEventListener('click', () => {
+      document.getElementById('historyDetailModal').classList.remove('active');
+    });
+    document.getElementById('btnCloseHistModal2').addEventListener('click', () => {
+      document.getElementById('historyDetailModal').classList.remove('active');
+    });
+
+    document.getElementById('transSearchInput').addEventListener('input', (e) => {
+      renderHistoryTable(e.target.value.trim());
+    });
+
+    renderHistoryTable();
+  </script>
+</body>
+</html>

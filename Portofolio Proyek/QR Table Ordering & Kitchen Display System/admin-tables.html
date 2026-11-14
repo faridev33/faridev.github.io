@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Meja & QR Code - Admin Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- SuperAdmin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        <h1 class="sidebar-title">Cafe Fari Admin</h1>
+        <small class="sidebar-subtitle">Hi, Super Administrator</small>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="admin-dashboard.html" class="menu-link">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-products.html" class="menu-link">
+            <span>☕</span>
+            <span>Produk (Menu)</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-tables.html" class="menu-link active">
+            <span>🪑</span>
+            <span>Manajemen Meja</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-order-items.html" class="menu-link">
+            <span>📝</span>
+            <span>Detail Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-transactions.html" class="menu-link">
+            <span>💰</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-users.html" class="menu-link">
+            <span>👥</span>
+            <span>Pengguna (Staff)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Manajemen Meja & QR Code</h1>
+          <p class="page-subtitle">Generate QR code meja untuk pemesanan mandiri oleh tamu cafe.</p>
+        </div>
+        <div>
+          <button class="btn-add" id="btnOpenAddTable">
+            ➕ Tambah Meja Baru
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nomor Meja</th>
+                <th>Kapasitas</th>
+                <th>Status Okupansi</th>
+                <th>Aksi & QR Code</th>
+              </tr>
+            </thead>
+            <tbody id="tablesTableBody">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD TABLE MODAL -->
+  <div class="modal-overlay" id="addTableModal">
+    <div class="modal-box" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>Tambah Meja Baru</h3>
+        <button class="btn-close-modal" id="btnCloseTableModal">&times;</button>
+      </div>
+
+      <form id="tableForm">
+        <div class="form-group">
+          <label>Nomor Meja</label>
+          <input type="number" id="newTableNumber" class="form-input" required placeholder="Contoh: 11" />
+        </div>
+        <div class="form-group">
+          <label>Kapasitas (Orang)</label>
+          <input type="number" id="newTableCapacity" class="form-input" required value="4" />
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn-secondary" id="btnCancelTableModal">Batal</button>
+          <button type="submit" class="btn-add">Simpan Meja</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- QR CODE PREVIEW & PRINT MODAL (Exact from QRCodeModal.jsx) -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-box" style="text-align: center; max-width: 420px;">
+      <div class="modal-header">
+        <h3 id="qrModalTableTitle">QR Order - Meja 01</h3>
+        <button class="btn-close-modal" id="btnCloseQrModal">&times;</button>
+      </div>
+
+      <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">Scan menggunakan kamera HP untuk memesan menu</p>
+
+      <!-- Printable QR Card Area -->
+      <div id="printableQrArea" style="background: white; border: 2px dashed #333; border-radius: 12px; padding: 20px; display: inline-block; margin-bottom: 15px;">
+        <div style="font-family: var(--font-heading); font-size: 20px; font-weight: bold; color: var(--color-dark-coffee); margin-bottom: 4px;">
+          CAFE FARI
+        </div>
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #777; margin-bottom: 12px;">
+          QR Table Ordering
+        </div>
+
+        <!-- Dynamic QR SVG Generator -->
+        <div id="qrSvgWrapper" class="qr-display" style="padding: 10px; margin: 0 auto 10px;">
+          <!-- SVG rendered by JS -->
+        </div>
+
+        <div style="font-size: 18px; font-weight: 800; color: var(--color-deep-dark);" id="qrCardTableNumber">
+          MEJA 01
+        </div>
+        <div style="font-size: 11px; color: #888;" id="qrCardUrlDisplay">
+          customer-menu.html?table=1
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button type="button" class="btn-secondary" id="btnCloseQrModal2">Tutup</button>
+        <button type="button" class="btn-add" onclick="window.print()" style="background:#2d3436;">🖨️ Cetak Kartu Meja</button>
+        <a href="customer-menu.html?table=1" id="qrDirectLink" target="_blank" class="btn-add" style="background:var(--color-green-success);">
+          📱 Buka Menu Meja
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let tables = [];
+
+    function renderTables() {
+      tables = window.CafeStore.getTables();
+      const tbody = document.getElementById('tablesTableBody');
+      tbody.innerHTML = '';
+
+      tables.forEach(t => {
+        const isOccupied = (t.status === 'Occupied');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <span style="background:var(--color-dark-coffee); color:var(--color-warm-gold); padding:4px 12px; border-radius:15px; font-weight:700; font-size:13px;">
+              Meja ${t.number}
+            </span>
+          </td>
+          <td><strong>${t.capacity} Orang</strong></td>
+          <td>
+            <span class="status-badge ${isOccupied ? 'unavailable' : 'available'}">
+              ${isOccupied ? '● Terisi Pelanggan' : '○ Kosong (Tersedia)'}
+            </span>
+          </td>
+          <td>
+            <button class="btn-qr" onclick="openQrModal(${t.number})">
+              📷 QR Code
+            </button>
+            <button class="btn-del" onclick="deleteTableItem(${t.id}, ${t.number})">
+              Hapus
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal Add Table
+    document.getElementById('btnOpenAddTable').addEventListener('click', () => {
+      document.getElementById('newTableNumber').value = (tables.length ? Math.max(...tables.map(t => t.number)) + 1 : 1);
+      document.getElementById('addTableModal').classList.add('active');
+    });
+
+    document.getElementById('tableForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const num = parseInt(document.getElementById('newTableNumber').value);
+      const cap = parseInt(document.getElementById('newTableCapacity').value);
+
+      if (tables.some(t => t.number === num)) {
+        alert('Nomor meja tersebut sudah ada!');
+        return;
+      }
+
+      window.CafeStore.saveTable({ number: num, capacity: cap, status: 'Available' });
+      document.getElementById('addTableModal').classList.remove('active');
+      renderTables();
+    });
+
+    function deleteTableItem(id, num) {
+      if (confirm(`Hapus Meja ${num}?`)) {
+        window.CafeStore.deleteTable(id);
+        renderTables();
+      }
+    }
+
+    // QR Code Modal Generator (Generates clean SVG QR pattern)
+    function openQrModal(tableNum) {
+      document.getElementById('qrModalTableTitle').textContent = `QR Code - Meja ${tableNum}`;
+      document.getElementById('qrCardTableNumber').textContent = `MEJA ${tableNum.toString().padStart(2, '0')}`;
+      
+      const targetUrl = `customer-menu.html?table=${tableNum}`;
+      document.getElementById('qrCardUrlDisplay').textContent = targetUrl;
+      document.getElementById('qrDirectLink').href = targetUrl;
+
+      // Draw SVG QR Code
+      const qrWrapper = document.getElementById('qrSvgWrapper');
+      qrWrapper.innerHTML = generateQrSvg(tableNum);
+
+      document.getElementById('qrModal').classList.add('active');
+    }
+
+    function generateQrSvg(seed) {
+      // Deterministic decorative QR code generator
+      return `
+        <svg width="180" height="180" viewBox="0 0 100 100">
+          <rect width="100" height="100" fill="#fff" />
+          <!-- Corner Position Markers -->
+          <rect x="5" y="5" width="26" height="26" fill="#111" />
+          <rect x="8" y="8" width="20" height="20" fill="#fff" />
+          <rect x="11" y="11" width="14" height="14" fill="#111" />
+
+          <rect x="69" y="5" width="26" height="26" fill="#111" />
+          <rect x="72" y="8" width="20" height="20" fill="#fff" />
+          <rect x="75" y="11" width="14" height="14" fill="#111" />
+
+          <rect x="5" y="69" width="26" height="26" fill="#111" />
+          <rect x="8" y="72" width="20" height="20" fill="#fff" />
+          <rect x="11" y="75" width="14" height="14" fill="#111" />
+
+          <!-- Internal Data Matrix representation -->
+          <rect x="36" y="8" width="6" height="6" fill="#111" />
+          <rect x="46" y="8" width="6" height="6" fill="#111" />
+          <rect x="56" y="8" width="6" height="6" fill="#111" />
+          <rect x="36" y="18" width="12" height="6" fill="#111" />
+          <rect x="54" y="18" width="8" height="6" fill="#111" />
+
+          <rect x="8" y="36" width="6" height="6" fill="#111" />
+          <rect x="18" y="36" width="12" height="6" fill="#111" />
+          <rect x="8" y="46" width="6" height="12" fill="#111" />
+          <rect x="18" y="52" width="6" height="6" fill="#111" />
+
+          <!-- Center area unique pattern based on seed -->
+          <rect x="36" y="36" width="28" height="28" fill="#5A4A42" rx="4" />
+          <text x="50" y="54" font-family="sans-serif" font-size="12" font-weight="bold" fill="#F9F8F6" text-anchor="middle">M${seed}</text>
+
+          <rect x="68" y="36" width="8" height="6" fill="#111" />
+          <rect x="80" y="36" width="12" height="6" fill="#111" />
+          <rect x="68" y="46" width="6" height="12" fill="#111" />
+          <rect x="80" y="50" width="12" height="6" fill="#111" />
+
+          <rect x="36" y="68" width="12" height="6" fill="#111" />
+          <rect x="54" y="68" width="8" height="6" fill="#111" />
+          <rect x="36" y="78" width="6" height="12" fill="#111" />
+          <rect x="48" y="78" width="14" height="6" fill="#111" />
+          <rect x="68" y="70" width="12" height="12" fill="#111" />
+          <rect x="84" y="76" width="8" height="14" fill="#111" />
+        </svg>
+      `;
+    }
+
+    document.getElementById('btnCloseTableModal').addEventListener('click', () => {
+      document.getElementById('addTableModal').classList.remove('active');
+    });
+    document.getElementById('btnCancelTableModal').addEventListener('click', () => {
+      document.getElementById('addTableModal').classList.remove('active');
+    });
+    document.getElementById('btnCloseQrModal').addEventListener('click', () => {
+      document.getElementById('qrModal').classList.remove('active');
+    });
+    document.getElementById('btnCloseQrModal2').addEventListener('click', () => {
+      document.getElementById('qrModal').classList.remove('active');
+    });
+
+    renderTables();
+  </script>
+</body>
+</html>

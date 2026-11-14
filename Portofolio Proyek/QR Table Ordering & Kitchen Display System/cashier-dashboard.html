@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Kasir - Cafe Fari POS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- Cashier Sidebar -->
+    <aside class="sidebar cashier-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">CAFE FARI</h2>
+        <span class="sidebar-subtitle">Cashier Point of Sale</span>
+        <div style="margin-top: 10px; font-size: 13px; color: var(--color-warm-gold); background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px;">
+          💵 Shift: Rina Kasir
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="cashier-dashboard.html" class="menu-link active">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="cashier-payment.html" class="menu-link">
+            <span>💵</span>
+            <span>Pembayaran Kasir</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="cashier-history.html" class="menu-link">
+            <span>🧾</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar Shift</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Dashboard Kasir POS</h1>
+          <p class="page-subtitle">Ringkasan performa dan antrian kasir Cafe Fari hari ini.</p>
+        </div>
+        <div>
+          <a href="cashier-payment.html" class="btn-add" style="background:var(--color-green-success);">
+            💵 Buka Pembayaran Kasir
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card green">
+          <div class="stat-label">Omset Kasir Hari Ini</div>
+          <div class="stat-value" id="cashierRevenueDisplay">Rp 0</div>
+          <div class="stat-desc">Total transaksi lunas shift aktif</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Transaksi Berhasil</div>
+          <div class="stat-value" id="cashierTransCountDisplay">0</div>
+          <div class="stat-desc">Struk pembayaran tercetak</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-label">Menunggu Pembayaran</div>
+          <div class="stat-value" id="cashierPendingCountDisplay">0</div>
+          <div class="stat-desc">Pesanan meja belum diselesaikan</div>
+        </div>
+      </div>
+
+      <!-- Recent Unpaid Quick Table -->
+      <div class="admin-card">
+        <div class="admin-header-action" style="margin-bottom: 1rem;">
+          <h2 style="font-size: 16px; margin: 0; font-weight: 700;">Pesanan Menunggu Pembayaran</h2>
+          <a href="cashier-payment.html" style="font-size: 12px; color: var(--color-blue-info); font-weight: 600;">Lihat Semua Antrian Kasir ➔</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID Order</th>
+                <th>Meja</th>
+                <th>Nama Pelanggan</th>
+                <th>Waktu Pesan</th>
+                <th>Total Tagihan</th>
+                <th>Aksi Kasir</th>
+              </tr>
+            </thead>
+            <tbody id="quickUnpaidTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    function renderDashboard() {
+      const trans = window.CafeStore.getTransactions();
+      const unpaid = window.CafeStore.getUnpaidOrders();
+
+      const totalRevenue = trans.reduce((acc, t) => acc + (t.total_price || 0), 0);
+      document.getElementById('cashierRevenueDisplay').textContent = window.CafeStore.formatRupiah(totalRevenue);
+      document.getElementById('cashierTransCountDisplay').textContent = trans.length + ' Struk';
+      document.getElementById('cashierPendingCountDisplay').textContent = unpaid.length + ' Meja';
+
+      const tbody = document.getElementById('quickUnpaidTableBody');
+      tbody.innerHTML = '';
+
+      if (unpaid.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; padding:30px; color:#777;">
+              Semua tagihan meja saat ini sudah lunas.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      unpaid.forEach(o => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#${o.id}</strong></td>
+          <td><span style="background:var(--color-dark-coffee); color:var(--color-warm-gold); padding:3px 8px; border-radius:12px; font-weight:600; font-size:11px;">Meja ${o.table_id}</span></td>
+          <td>${o.customer_name}</td>
+          <td>${window.CafeStore.formatTime(o.created_at)}</td>
+          <td><strong style="color:var(--color-dark-coffee);">${window.CafeStore.formatRupiah(o.total_price)}</strong></td>
+          <td>
+            <a href="cashier-payment.html?orderId=${o.id}" class="btn-add" style="padding:4px 10px; font-size:12px; background:var(--color-green-success);">
+              💵 Proses Bayar
+            </a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    renderDashboard();
+  </script>
+</body>
+</html>

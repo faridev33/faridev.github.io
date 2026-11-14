@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Pesanan Menu - Admin Cafe Fari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <script src="js/store.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <div class="app-layout">
+    <!-- SuperAdmin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        <h1 class="sidebar-title">Cafe Fari Admin</h1>
+        <small class="sidebar-subtitle">Hi, Super Administrator</small>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="admin-dashboard.html" class="menu-link">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-products.html" class="menu-link">
+            <span>☕</span>
+            <span>Produk (Menu)</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-tables.html" class="menu-link">
+            <span>🪑</span>
+            <span>Manajemen Meja</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-order-items.html" class="menu-link active">
+            <span>📝</span>
+            <span>Detail Pesanan</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-transactions.html" class="menu-link">
+            <span>💰</span>
+            <span>Riwayat Transaksi</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="admin-users.html" class="menu-link">
+            <span>👥</span>
+            <span>Pengguna (Staff)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="window.CafeStore.logout()">
+          <span>🚪</span>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="admin-header-action">
+        <div>
+          <h1 class="page-title">Monitoring Detail Item Pesanan</h1>
+          <p class="page-subtitle">Daftar rinci seluruh item makanan & minuman yang dipesan oleh setiap meja.</p>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. Order</th>
+                <th>Meja</th>
+                <th>Nama Menu Dipilih</th>
+                <th>Varian / Catatan</th>
+                <th>Jumlah (Qty)</th>
+                <th>Subtotal</th>
+                <th>Waktu</th>
+                <th>Status Pembayaran</th>
+              </tr>
+            </thead>
+            <tbody id="orderItemsTbody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function renderOrderItems() {
+      const orders = window.CafeStore.getOrders();
+      const tbody = document.getElementById('orderItemsTbody');
+      tbody.innerHTML = '';
+
+      if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:#777;">Tidak ada item pesanan aktif.</td></tr>';
+        return;
+      }
+
+      orders.forEach(order => {
+        (order.items || []).forEach(item => {
+          const tr = document.createElement('tr');
+          const isPaid = (order.payment_status === 'PAID');
+          tr.innerHTML = `
+            <td><strong>#${order.id}</strong></td>
+            <td><span style="background:var(--color-dark-coffee); color:var(--color-warm-gold); padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">Meja ${order.table_id}</span></td>
+            <td><strong>${item.name}</strong></td>
+            <td style="font-size:12px; color:#666;">
+              ${item.optionsText ? `<span>${item.optionsText}</span>` : '-'}
+              ${item.note ? `<div style="color:#a38870;">📝 ${item.note}</div>` : ''}
+            </td>
+            <td><strong>${item.quantity} porsi</strong></td>
+            <td><strong>${window.CafeStore.formatRupiah(item.price * item.quantity)}</strong></td>
+            <td>${window.CafeStore.formatTime(order.created_at)}</td>
+            <td><span class="status-badge ${isPaid ? 'paid' : 'unpaid'}">${order.payment_status}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    renderOrderItems();
+  </script>
+</body>
+</html>
