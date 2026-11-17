@@ -86,11 +86,13 @@ Proyek ini berbasis model Machine Learning / Deep Learning, publikasi paper jurn
 
 Pemeriksaan terhadap kode halaman utama portofolio (`C:\Users\ghiff\OneDrive\Dokumen\potro\porto1\index.html`) menemukan beberapa catatan perbaikan:
 
-1. **Tombol "Live Demo" dan "Repository" Masih Mengarah ke `#` (Placeholder):**
-   - Pada proyek `Agent NotebookLM`, tombol Demo masih `href="#"`.
-   - Pada proyek `ALPR`, `Toll Road`, `MediaCare`, `QR Restaurant`, `Barbershop`, tombol Live Demo dan Repository masih berupa `href="#"` atau link profil umum GitHub `https://github.com/ghiffarihilmi` tanpa nama repo spesifik.
+1. **Tautan Repository (SUDAH DIPERBAIKI):**
+   - Seluruh tombol **Repository** kini mengarah ke akun GitHub asli `https://github.com/faridev33`. Sebelumnya semua mengarah ke `https://github.com/ghiffarihilmi` yang mengembalikan **HTTP 404** (akun tidak ada).
+   - Repo spesifik sudah terpasang pada 5 proyek: `Agentic-Market-Desk` (Agentic Market Desk), `ai-cv-screening` (AI Candidate Selection), `lms-fari-v1` (Multi-platform LMS), `cafe-fari-v1` (QR Table Ordering), `sistem-barbershop` (Barbershop Live Queue).
+   - Proyek tanpa repo publik tetap memakai profil `faridev33` sebagai fallback.
+   - Sisa tombol yang masih `href="#"` (belum ada demo maupun repo): `ALPR`, `Toll Road`, `MediaCare`, `B2B Churn`, `Supermarket`.
 
-2. **Belum Terhubung ke Salinan HTML/CSS Lokal:**
+2. **Salinan HTML/CSS Lokal (SUDAH TERHUBUNG):**
    - Folder salinan lokal di `Portofolio Proyek/<Nama Proyek>/index.html` dapat langsung di-link dari tombol **"Live Demo"** di halaman `porto1/index.html`, misalnya:
      - `href="Portofolio Proyek/Agentic Market Desk – Autonomous IDX Multi-Agent Desk/index.html"`
      - `href="Portofolio Proyek/OrthoScan AI – Sistem Deteksi Fraktur Citra Rontgen/index.html"`
